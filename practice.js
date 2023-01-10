@@ -146,18 +146,18 @@
 // setTimeout(arto.greet.bind(arto), 1000)
 
 //////////////////// Classes ////////////////////
-class Person{
-  constructor(name, age){
-    this.name = name
-    this.age = age
-  }
-  greet(){
-    console.log('hello, my name is '+ this.name)
-  }
-}
+// class Person{
+//   constructor(name, age){
+//     this.name = name
+//     this.age = age
+//   }
+//   greet(){
+//     console.log('hello, my name is '+ this.name)
+//   }
+// }
 
-const adam = new Person('Adam Ondra', 35)
-adam.greet()
+// const adam = new Person('Adam Ondra', 35)
+// adam.greet()
 
-const janja = new Person('Janja Garnbret', 22)
-janja.greet()
+// const janja = new Person('Janja Garnbret', 22)
+// janja.greet()
