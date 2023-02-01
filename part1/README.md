@@ -1,70 +1,111 @@
-# Getting Started with Create React App
+## 1-d Rules of Hooks:
+useState函數（以及課程後面介紹的useEffect函數）不能從循環、條件表達式或任何不是定義組件的函數的地方調用。這樣做是為了確保鉤子總是以相同的順序被調用，如果不是這樣的話，應用將表現得不正常。
+```js
+const App = () => {
+  // these are ok
+  const [age, setAge] = useState(0)
+  const [name, setName] = useState('Juha Tauriainen')
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+  if ( age > 10 ) {
+    // this does not work!
+    const [foobar, setFoobar] = useState(null)
+  }
 
-## Available Scripts
+  for ( let i = 0; i < age; i++ ) {
+    // also this is not good
+    const [rightWay, setRightWay] = useState(false)
+  }
 
-In the project directory, you can run:
+  const notGood = () => {
+    // and this is also illegal
+    const [x, setX] = useState(-1000)
+  }
 
-### `npm start`
+  return (
+    //...
+  )
+}
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 1-d Functions that returns a function:
+```js
+const App = () => {
+  const [value, setValue] = useState(10)
 
-### `npm test`
+  const hello = () => {
+    const handler = () => console.log('hello world')
+    return handler
+  }
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  return (
+    <div>
+      {value}
+      <button onClick={hello()}>button</button>
+    </div>
+  )
+}
+```
 
-### `npm run build`
+## 1-d Passing Event Handlers to Child Components
+![](https://i.imgur.com/UTPouom.png)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 1-d Do Not Define Components Within Components
+Display 的定義不應該放在那：
+```js
+// This is the right place to define a component
+const Button = (props) => (
+  <button onClick={props.handleClick}>
+    {props.text}
+  </button>
+)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+const App = () => {
+  const [value, setValue] = useState(10)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  const setToValue = newValue => {
+    console.log('value now', newValue)
+    setValue(newValue)
+  }
 
-### `npm run eject`
+  // Do not define components inside another component
+  const Display = props => <div>{props.value}</div>
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+  return (
+    <div>
+      <Display value={value} />
+      <Button handleClick={() => setToValue(1000)} text="thousand" />
+      <Button handleClick={() => setToValue(0)} text="reset" />
+      <Button handleClick={() => setToValue(value + 1)} text="increment" />
+    </div>
+  )
+}
+```
+而應該是：
+```js
+const Display = props => <div>{props.value}</div>
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+const Button = (props) => (
+  <button onClick={props.handleClick}>
+    {props.text}
+  </button>
+)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+const App = () => {
+  const [value, setValue] = useState(10)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+  const setToValue = newValue => {
+    console.log('value now', newValue)
+    setValue(newValue)
+  }
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+  return (
+    <div>
+      <Display value={value} />
+      <Button handleClick={() => setToValue(1000)} text="thousand" />
+      <Button handleClick={() => setToValue(0)} text="reset" />
+      <Button handleClick={() => setToValue(value + 1)} text="increment" />
+    </div>
+  )
+}
+```
