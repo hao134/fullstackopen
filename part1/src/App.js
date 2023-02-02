@@ -2,9 +2,10 @@ import { useState } from 'react'
 
 const Staticline = (props) => {
   return(
-    <div>
-      {props.text} {props.value}
-    </div>
+    <tr>
+      <td>{props.text}</td> 
+      <td>{props.value}</td>
+    </tr>
   )
 }
 
@@ -15,15 +16,21 @@ const Statictics = (props) => {
         <div>
           No feedback given
         </div>
+        
       )
     }
     return (
       <div>
-        <Staticline text="good" value={props.good}/>
-        <Staticline text="neutral" value={props.neutral}/>
-        <Staticline text="bad" value={props.bad}/>
-        <Staticline text="average" value={props.count/props.allClicks.length}/>
-        <Staticline text="positive" value={(props.good/props.allClicks.length)*100 + "%"}/>
+        <table>
+          <tbody>
+            <Staticline text="good" value={props.good}/>
+            <Staticline text="neutral" value={props.neutral}/>
+            <Staticline text="bad" value={props.bad}/>
+            <Staticline text="average" value={props.count/props.allClicks.length}/>
+            <Staticline text="positive" value={(props.good/props.allClicks.length)*100 + "%"}/>
+          </tbody>
+        </table>
+        
       </div>
     )
   }
