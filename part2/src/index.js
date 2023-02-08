@@ -3,27 +3,33 @@ import ReactDOM from 'react-dom/client'
 
 import App from './App'
 
-const notes = [
-  {
-    id: 1,
-    content: 'HTML is easy',
-    date: '2019-05-30T17:30:31.098Z',
-    important: true
+const persons = [
+  { 
+    name: 'Arto Hellas',
+    number: '0313-314141',
+    date: new Date().toISOString(),//'2019-05-30T19:20:14.298Z',
+    id: 'Arto Hellas',
   },
-  {
-    id: 2,
-    content: 'Browser can execute only JavaScript',
-    date: '2019-05-30T18:39:34.091Z',
-    important: false
+  { 
+    name: 'Ada Lovelace',
+    number: '39-44-5323523',
+    date: new Date().toISOString(),//'2019-05-30T19:20:14.298Z',
+    id: 'Ada Lovelace',
   },
-  {
-    id: 3,
-    content: 'GET and POST are the most important methods of HTTP protocol',
-    date: '2019-05-30T19:20:14.298Z',
-    important: true
-  }
-]
+  { 
+    name: 'Dan Abramov',
+    number: '12-43-234345',
+    date: new Date().toISOString(),//'2019-05-30T19:20:14.298Z',
+    id: 'Dan Abramov',
+  },
+  { 
+    name: 'Mary Poppendieck',
+    number: '39-23-6423122',
+    date: new Date().toISOString(),//'2019-05-30T19:20:14.298Z',
+    id: 'Mary Poppendieck',
+  },
 
+]
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <App notes={notes} />
+  <App persons={persons}/>
 )
