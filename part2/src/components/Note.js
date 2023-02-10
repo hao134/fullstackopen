@@ -1,0 +1,14 @@
+import React from "react";
+
+const Note = ({note, toggoleImportance }) => {
+    const label = note.important
+      ? 'make not important' : 'make important'
+    return (
+        <li>
+            {note.content}{' '}
+            <button onClick={toggoleImportance}>{label}</button>
+        </li>
+    )
+}
+
+export default Note
