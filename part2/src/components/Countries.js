@@ -1,19 +1,12 @@
-import CountryData from "./countrydata";
+const Countries = ({ countriesToShow, setCountriesToShow }) =>{
+    if (countriesToShow.length === 1) return null;
 
-const Countries = ({ countriesToShow }) =>{
-    if (countriesToShow.length === 1){
-        return <CountryData country={countriesToShow[0]} />;
-    } else if (countriesToShow.length <= 10) {
-        return (
-            <div>
-                {countriesToShow.map((country)=>(
-                    <div key={country.name.official}>{country.name.common}</div>
-                ))}
-            </div>
-        );
-    } else if (countriesToShow.length > 10) {
-        return <div>Too many matches, specify another query</div>
-    }
+    return countriesToShow.map((country)=>(
+        <div key={country.name.official}>
+            {country.name.common}{" "}
+            <button onClick={()=>setCountriesToShow([country])}>show</button>
+        </div>
+    ))
 }
 
 export default Countries
