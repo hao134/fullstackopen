@@ -1,4 +1,4 @@
-import { useState, useEffect} from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Countries from './components/Countries'
 import CountryData from './components/Countrydata'
@@ -24,21 +24,21 @@ const App = () => {
     const search = event.target.value;
     setQuery(search);
     setCountrytoshow(
-      countries.filter((country)=>country.name.common.toLowerCase().includes(search))
+      countries.filter((country) => country.name.common.toLowerCase().includes(search))
     )
   }
 
   return (
     <div>
       <div>
-        Find countries <input value={query} onChange={queryByName}/>
+        Find countries <input value={query} onChange={queryByName} />
       </div>
-      {countrytoshow.length === 1 ?(
+      {countrytoshow.length === 1 ? (
         <CountryData country={countrytoshow[0]} />
-      ): null}
+      ) : null}
       {countrytoshow.length > 10 ? (
         <div>Too many matches, specify another filter</div>
-      ):(
+      ) : (
         <Countries
           countriesToShow={countrytoshow}
           setCountriesToShow={setCountrytoshow}
