@@ -74,7 +74,7 @@
     {
       "content": "mopko",
       "date": "2023-02-10T13:26:08.956Z",
-      "important": false,
+      "important": true,
       "id": 13
     },
     {
@@ -82,6 +82,12 @@
       "date": "2023-02-10T13:29:30.706Z",
       "important": false,
       "id": 14
+    },
+    {
+      "content": "ljl",
+      "date": "2023-02-11T09:17:32.675Z",
+      "important": true,
+      "id": 15
     }
   ],
   "persons": [
