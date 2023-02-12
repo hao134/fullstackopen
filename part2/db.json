@@ -98,34 +98,16 @@
       "id": "Arto Hellas"
     },
     {
-      "name": "Ada Lovelace",
-      "number": "39-44-5323523",
-      "date": "2019-05-30T19:20:14.298Z",
-      "id": "Ada Lovelace"
-    },
-    {
       "name": "Dan Abramov",
       "number": "12-43-234345",
       "date": "2019-05-30T19:20:14.298Z",
       "id": "Dan Abramov"
     },
     {
-      "name": "Mary Poppendieck",
-      "number": "39-23-6423122",
-      "date": "2019-05-30T19:20:14.298Z",
-      "id": "Mary Poppendieck"
-    },
-    {
-      "name": "shih hao",
-      "number": "0963528205",
-      "date": "2023-02-11T12:41:43.640Z",
-      "id": "shih hao"
-    },
-    {
-      "name": "tom",
-      "number": "4114014",
-      "date": "2023-02-11T12:47:27.618Z",
-      "id": "tom"
+      "name": "test",
+      "number": "410u4104u",
+      "date": "2023-02-12T12:01:18.023Z",
+      "id": "test"
     }
   ]
 }
