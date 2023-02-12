@@ -1,103 +1,103 @@
 import { useState, useEffect } from 'react'
-import Filter from './components/Filter'
-import Persons from './components/Persons'
-import PersonForm from './components/PersonForm'
-import phonebookServices from './services/phonebooks'
+import Note from './components/Note'
+import noteService from './services/notes'
 
 const App = () => {
-  const [persons, setPersons] = useState([])
-  const [newPerson, setNewPerson] = useState({ name: "", number: "" })
-  const [filter, setFilter] = useState('')
-  const [personsToShow, setPersonsToShow] = useState([]);
+  const [notes, setNotes] = useState([])
+  const [newNote, setNewNote] = useState('')
+  const [showAll, setShowAll] = useState(true)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
-    phonebookServices
+    noteService
       .getAll()
-      .then(initialPersons => {
-        setPersons(initialPersons)
-        setPersonsToShow(initialPersons)
+      .then(initialNotes => {
+        setNotes(initialNotes)
       })
   }, [])
-  console.log('render', persons.length, 'persons')
 
-  const addPerson = (event) => {
+  const toggleImportanceOf = (id) => {
+    const note = notes.find(n => n.id === id)
+    const changedNote = { ...note, important: !note.important }
+
+
+    noteService
+      .update(id, changedNote)
+      .then(returnedNote => {
+        setNotes(notes.map(note => note.id !== id ? note : returnedNote))
+      })
+      .catch(error => {
+        setErrorMessage(
+          `Note '${note.content}' was already removed from server`
+        )
+        setTimeout(()=>{
+          setErrorMessage(null)
+        }, 5000)
+        setNotes(notes.filter(n => n.id !== id))
+      })
+  }
+
+  const addNote = (event) => {
     event.preventDefault()
-    const currentName = persons.filter((person) => person.name === newPerson.name)
-    const personObject = {
-      name: newPerson.name,
-      number: newPerson.number,
-      date: new Date().toISOString(),
-      id: newPerson.name
-    };
-    if (currentName.length === 0) {
-
-      phonebookServices
-        .create(personObject)
-        .then(returnedPerson => {
-          setPersons(persons.concat(returnedPerson))
-          setPersonsToShow(persons.concat(returnedPerson))
-        })
-
-    } else {
-      if (window.confirm(`${currentName[0].name} is already added to phonebook, replace the old number with a new one?`)) {
-        phonebookServices
-          .update(currentName[0].id, personObject)
-          .then((returnedPerson) => {
-            const updatedPersons = persons.map(person => person.id !== returnedPerson.id ? person : returnedPerson)
-            setPersons(updatedPersons)
-            setPersonsToShow(updatedPersons)
-          });
-      }
+    const noteObject = {
+      content: newNote,
+      date: new Date(),
+      important: Math.random() > 0.5,
     }
-    setNewPerson({ name: "", number: "" })
+
+    noteService
+      .create(noteObject)
+      .then(returnedNote => {
+        setNotes(notes.concat(returnedNote))
+        setNewNote('')
+      })
+
   }
 
-  const handleChange = (event) => {
-    // form's name and value
-    const { name, value } = event.target;
-    // form of newPerson: {name: '', number: ''}
-    // when [name] is name is "a" -> add {name: "a"}
-    // when [name] is number is "1" -> add {number: "1"}
-    setNewPerson({ ...newPerson, [name]: value });
-    // see how it works
-    console.log(newPerson)
+  const handleNoteChange = (event) => {
+    setNewNote(event.target.value)
   }
 
-  const filterByName = (event) => {
-    const search = event.target.value;
-    setFilter(search);
-    setPersonsToShow(
-      persons.filter((person) => person.name.toLowerCase().includes(search))
+  const notesToShow = showAll
+    ? notes
+    : notes.filter(note => note.important)
+
+  const Notification = ({ message }) => {
+    if (message === null) {
+      return null
+    }
+
+    return (
+      <div className='error'>
+        {message}
+      </div>
     )
   }
-
-  const deletePerson = (id, name) => {
-    if (window.confirm(`Delete ${name}?`)) {
-      phonebookServices
-        .remove(id)
-        .then((response) => {
-          const updatedPersons = persons.filter((person) => person.id !== id);
-          setPersons(updatedPersons);
-          setPersonsToShow(updatedPersons);
-        });
-    }
-  };
-
   return (
     <div>
-      <h2>Phonebook</h2>
-      <Filter value={filter} filterByName={filterByName} />
-      <h2>add a new</h2>
-      <PersonForm
-        addPerson={addPerson}
-        newPerson={newPerson}
-        handleChange={handleChange}
-      />
-      <h2>Numbers</h2>
-
-
-      <Persons personsToShow={personsToShow} deletePerson={deletePerson} />
-
+      <h1>Notes</h1>
+      <Notification message={errorMessage}/>
+      <div>
+        <button onClick={() => setShowAll(!showAll)}>
+          show {showAll ? 'important' : 'all'}
+        </button>
+      </div>
+      <ul>
+        {notesToShow.map(note =>
+          <Note
+            key={note.id}
+            note={note}
+            toggoleImportance={() => toggleImportanceOf(note.id)}
+          />
+        )}
+      </ul>
+      <form onSubmit={addNote}>
+        <input
+          value={newNote}
+          onChange={handleNoteChange}
+        />
+        <button type="submit">Save</button>
+      </form>
     </div>
   )
 }
