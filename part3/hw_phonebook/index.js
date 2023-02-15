@@ -1,6 +1,23 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express();
 
+
+morgan.token("data", (request, response) => {
+    return request.method === "POST" ? JSON.stringify(request.body) : " ";
+});
+
+const morganrequest = morgan(function (tokens, req, res) {
+    return [
+      tokens.method(req, res),
+      tokens.url(req, res),
+      tokens.status(req, res),
+      tokens.res(req, res, 'content-length'), '-',
+      tokens['response-time'](req, res), 'ms',
+      tokens.data(req, res)
+    ].join(' ')
+  })
+app.use(morganrequest)
 app.use(express.json())
 
 let persons = [
