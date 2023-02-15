@@ -17,6 +17,7 @@ const unknownEndpoint = (request, response) => {
 //if we want them to be executed before the route event handlers are called. 
 app.use(requestLogger)
 app.use(express.json())
+app.use(express.static('build'))
 app.use(cors())
 
 let notes = [
@@ -94,7 +95,7 @@ app.post('/api/notes', (request, response) => {
 //we are defining middleware functions that are only called if no route handles the HTTP request.
 app.use(unknownEndpoint)
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
