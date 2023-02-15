@@ -2,7 +2,6 @@ const express = require('express')
 const morgan = require('morgan')
 const app = express();
 
-
 morgan.token("data", (request, response) => {
     return request.method === "POST" ? JSON.stringify(request.body) : " ";
 });

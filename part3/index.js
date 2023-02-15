@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express();
+const cors = require('cors')
 
 const requestLogger = (request, response, next) => {
   console.log('Method:', request.method)
@@ -16,6 +17,7 @@ const unknownEndpoint = (request, response) => {
 //if we want them to be executed before the route event handlers are called. 
 app.use(requestLogger)
 app.use(express.json())
+app.use(cors())
 
 let notes = [
   {
