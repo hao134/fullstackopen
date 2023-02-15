@@ -1,6 +1,20 @@
 const express = require('express')
 const app = express();
 
+const requestLogger = (request, response, next) => {
+  console.log('Method:', request.method)
+  console.log('Path:', request.path)
+  console.log('Body:', request.body)
+  console.log('---')
+  next()
+}
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+//if we want them to be executed before the route event handlers are called. 
+app.use(requestLogger)
 app.use(express.json())
 
 let notes = [
@@ -39,10 +53,10 @@ app.get('/api/notes', (request, response) => {
 app.get('/api/notes/:id', (request, response) => {
   const id = Number(request.params.id)
   const note = notes.find(note => note.id === id)
-  
+
   if (note) {
     response.json(note)
-  }else{
+  } else {
     response.status(404).end()
   }
 })
@@ -74,6 +88,9 @@ app.post('/api/notes', (request, response) => {
 
   response.json(note)
 })
+
+//we are defining middleware functions that are only called if no route handles the HTTP request.
+app.use(unknownEndpoint)
 
 const PORT = 3001
 app.listen(PORT, () => {
