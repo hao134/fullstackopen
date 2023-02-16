@@ -2,6 +2,15 @@ POST http://localhost:3001/api/notes
 Content-Type: application/json
 
 {
+    "content": "VS code rest client local",
+    "important": true
+}
+
+###
+POST https://render-notesapp.onrender.com/api/notes
+Content-Type: application/json
+
+{
     "content": "VS code rest client",
     "important": true
 }
