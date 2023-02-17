@@ -20,6 +20,20 @@ const morganrequest = morgan(function (tokens, req, res) {
       tokens.data(req, res)
     ].join(' ')
   })
+
+const unknownEndpoint = (request, response) => {
+    response.status(404).send({ error: 'unknown endpoint' })
+}
+
+const errorHandler = (error, request, response, next) => {
+    console.log(error.message)
+
+    if (error.name === 'CastError') {
+        return response.status(400).send({ error: 'malformatted id'})
+    }
+
+    next(error)
+}
   
 app.use(morganrequest)
 app.use(cors())
@@ -67,7 +81,7 @@ app.post('/api/persons', (request, response) => {
     })
 })
 
-app.delete('/api/persons/:id', (request, response)=>{
+app.delete('/api/persons/:id', (request, response, next)=>{
     Phonebook.findByIdAndRemove(request.params.id)
        .then(result => {
         response.status(204).end()
@@ -84,6 +98,9 @@ app.delete('/api/persons/:id', (request, response)=>{
 //         <p>${new Date()}</p>`
 //     );
 // })
+
+app.use(unknownEndpoint)
+app.use(errorHandler)
 
 
 const PORT = process.env.PORT || 3001
