@@ -103,12 +103,16 @@ app.put('/api/persons/:id', (request, response, next) => {
 
 
 
-// app.get('/info', (request, response) => {
-//     response.send(
-//         `<p>Phone book has info for ${persons.length} people </p>
-//         <p>${new Date()}</p>`
-//     );
-// })
+app.get('/info', (request, response, next) => {
+    Phonebook.find({})
+        .then(people => {
+            response.send(
+                `<p> Phone book has info for ${people.length} people </p>
+                <p>${new Date()}</p>` 
+            );
+        })
+        .catch(error => next(error))
+});
 
 app.use(unknownEndpoint)
 app.use(errorHandler)
