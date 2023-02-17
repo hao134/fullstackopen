@@ -56,7 +56,7 @@ app.get('/api/persons/:id', (request, response) => {
     })
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const body = request.body
 
     if (!body.number || !body.name) {
@@ -64,21 +64,18 @@ app.post('/api/persons', (request, response) => {
             error: 'need name or number'
         })
     }
-    
-    // const existPerson = persons.find((person)=> person.name === body.name)
-    // if (existPerson){
-    //     return response.status(400).json({
-    //         error: 'the name already existed'
-    //     })
-    // }
+
     const person = new Phonebook({
         name: body.name,
         number: body.number,
     })
     
-    person.save().then(savedPerson => {
+    person
+      .save()
+      .then(savedPerson => {
         response.json(savedPerson)
-    })
+      })
+      .catch((error)=>next(error));
 })
 
 app.delete('/api/persons/:id', (request, response, next)=>{
@@ -89,6 +86,20 @@ app.delete('/api/persons/:id', (request, response, next)=>{
        .catch(error => next(error))
 })
 
+app.put('/api/persons/:id', (request, response, next) => {
+    const body = request.body
+
+    const person = {
+        name: body.name,
+        number: body.number,
+    }
+
+    Phonebook.findByIdAndUpdate(request.params.id, person, { new: true })
+      .then(updatedPerson => {
+        response.json(updatedPerson)
+      })
+      .catch(error => next(error))
+})
 
 
 
