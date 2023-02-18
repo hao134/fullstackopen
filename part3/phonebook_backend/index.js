@@ -1,12 +1,12 @@
-require( 'dotenv' ).config()
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 const app = express()
 
-const Phonebook = require('./models/phonebook')
+const Phonebook = require('./models/phonebook');
 
-morgan.token('data', (request) => {
+morgan.token('data', (request, response) => {
   return request.method === 'POST' ? JSON.stringify(request.body) : ' '
 })
 
@@ -75,12 +75,12 @@ app.post('/api/persons', (request, response, next) => {
     .then(savedPerson => {
       response.json(savedPerson)
     })
-    .catch((error) => next(error))
+    .catch((error) => next(error));
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Phonebook.findByIdAndRemove(request.params.id)
-    .then(() => {
+    .then(result => {
       response.status(204).end()
     })
     .catch(error => next(error))
@@ -107,7 +107,7 @@ app.get('/info', (request, response, next) => {
     .then(people => {
       response.send(
         `<p> Phone book has info for ${people.length} people </p>
-        <p>${new Date()}</p>`
+                <p>${new Date()}</p>`
       )
     })
     .catch(error => next(error))

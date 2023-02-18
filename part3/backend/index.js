@@ -13,11 +13,11 @@ const requestLogger = (request, response, next) => {
   next()
 }
 
-const unknownEndpoint = (response) => {
+const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
 
-const errorHandler = (error, response, next) => {
+const errorHandler = (error, request, response, next) => {
   console.log(error.message)
 
   if (error.name === 'CastError'){
@@ -29,7 +29,7 @@ const errorHandler = (error, response, next) => {
   next(error)
 }
 
-//if we want them to be executed before the route event handlers are called.
+//if we want them to be executed before the route event handlers are called. 
 app.use(express.json())
 app.use(express.static('build'))
 app.use(requestLogger)
@@ -72,7 +72,7 @@ app.get('/api/notes/:id', (request, response, next) => {
 
 app.delete('/api/notes/:id', (request, response, next) => {
   Note.findByIdAndRemove(request.params.id)
-    .then(() => {
+    .then(result => {
       response.status(204).end()
     })
     .catch(error => next(error))
