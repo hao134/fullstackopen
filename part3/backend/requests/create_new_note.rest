@@ -6,6 +6,14 @@ Content-Type: application/json
     "important": true
 }
 
+### invalid post
+POST http://localhost:3001/api/notes
+Content-Type: application/json
+
+{
+    "content": "",
+    "important": true
+}
 ###
 POST https://render-notesapp.onrender.com/api/notes
 Content-Type: application/json
