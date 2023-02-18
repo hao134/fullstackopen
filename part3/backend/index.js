@@ -1,6 +1,6 @@
 require('dotenv').config()
 const express = require('express')
-const app = express();
+const app = express()
 const cors = require('cors')
 
 const Note = require('./models/note')
@@ -13,15 +13,15 @@ const requestLogger = (request, response, next) => {
   next()
 }
 
-const unknownEndpoint = (request, response) => {
+const unknownEndpoint = (response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
 
-const errorHandler = (error, request, response, next) => {
+const errorHandler = (error, response, next) => {
   console.log(error.message)
 
   if (error.name === 'CastError'){
-    return response.status(400).send({ error: 'malformatted id'})
+    return response.status(400).send({ error: 'malformatted id' })
   } else if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message })
   }
@@ -29,14 +29,12 @@ const errorHandler = (error, request, response, next) => {
   next(error)
 }
 
-//if we want them to be executed before the route event handlers are called. 
+//if we want them to be executed before the route event handlers are called.
 app.use(express.json())
 app.use(express.static('build'))
 app.use(requestLogger)
 app.use(cors())
 
-let notes = [
-]
 
 app.get('/api/notes', (request, response) => {
   Note.find({}).then(notes => {
@@ -68,24 +66,24 @@ app.get('/api/notes/:id', (request, response, next) => {
       } else {
         response.status(404).end()
       }
-  })
-  .catch(error => next(error))
+    })
+    .catch(error => next(error))
 })
 
 app.delete('/api/notes/:id', (request, response, next) => {
   Note.findByIdAndRemove(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
 })
 
 app.put('/api/notes/:id', (request, response, next) => {
-  const {content, important} = request.body
+  const { content, important } = request.body
 
   Note.findByIdAndUpdate(
-    request.params.id, 
-    { content, important}, 
+    request.params.id,
+    { content, important },
     { new: true, runValidators: true, context: 'query' }
   )
     .then(updatedNote => {
