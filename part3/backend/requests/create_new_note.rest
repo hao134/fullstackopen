@@ -22,3 +22,12 @@ Content-Type: application/json
     "content": "this node from render backend",
     "important": true
 }
+
+### invalid post2
+POST https://render-notesapp.onrender.com/api/notes
+Content-Type: application/json
+
+{
+    "content": "14411",
+    "important": true
+}

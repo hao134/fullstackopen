@@ -2,14 +2,22 @@ POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-    "name": "test",
-    "number": 12414314
+    "name": "Lucy",
+    "number": "124-1431441"
+}
+### invalid create
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "tt",
+    "number": "124-143141341"
 }
 ###
-POST https://shielded-ridge-97474.herokuapp.com/api/persons
+POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
     "name": "test",
-    "number": 12414314
+    "number": "12414314"
 }
