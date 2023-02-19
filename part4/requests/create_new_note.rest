@@ -1,0 +1,33 @@
+POST http://localhost:3001/api/notes
+Content-Type: application/json
+
+{
+    "content": "VS code rest client local",
+    "important": true
+}
+
+### invalid post
+POST http://localhost:3001/api/notes
+Content-Type: application/json
+
+{
+    "content": "",
+    "important": true
+}
+###
+POST https://render-notesapp.onrender.com/api/notes
+Content-Type: application/json
+
+{
+    "content": "this node from render backend",
+    "important": true
+}
+
+### invalid post2
+POST https://render-notesapp.onrender.com/api/notes
+Content-Type: application/json
+
+{
+    "content": "14411",
+    "important": true
+}

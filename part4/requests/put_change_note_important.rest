@@ -1,0 +1,16 @@
+PUT http://localhost:3001/api/notes/63ede94f69567d61351e71dd
+Content-Type: application/json
+
+{
+    "content": "HTML is HTML",
+    "important": false
+}
+
+###
+PUT https://render-notesapp.onrender.com/api/notes/63ede94f69567d61351e71dd
+Content-Type: application/json
+
+{
+    "content": "HTML is Easy2",
+    "important": true
+}
