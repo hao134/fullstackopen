@@ -1,3 +1,4 @@
+var _ = require('lodash')
 const listWithOneBlog = [
   {
     _id: '5a422aa71b54a676234d17f8',
@@ -58,9 +59,11 @@ const blogs = [
     __v: 0
   }
 ]
+//_.map(_.countBy(source, "closedDate"), (val, key) => ({ date: key, total: val }))
+const count = _.map(_.countBy(blogs, 'author'), (val, key) => ({ author: key, blogs: val }))
 
-const mostLiked = blogs.reduce((prev, curr) => {
-  return prev.likes > curr.likes ? prev : curr;
-});
-
+const mostLiked = count.reduce((prev, curr) => {
+  return prev.total > curr.total ? prev : curr
+})
+console.log(count)
 console.log(mostLiked)
