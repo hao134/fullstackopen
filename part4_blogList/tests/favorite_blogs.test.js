@@ -1,6 +1,6 @@
 const listHelper = require('../utils/list_helper')
 
-describe('most likes', () => {
+describe('favorite blogs', () => {
   const listWithZeroBlog =[]
   const listWithOneBlog = [
     {
@@ -65,23 +65,25 @@ describe('most likes', () => {
   ]
 
   test('when list is empty, return null', () => {
-    const result = listHelper.mostLikes(listWithZeroBlog)
+    const result = listHelper.favoriteLikes(listWithZeroBlog)
     expect(result).toBe(null)
   })
 
-  test('when list has only one blog post, equals the likes it shows', () => {
-    const result = listHelper.mostLikes(listWithOneBlog)
+  test('when list has only one blog post, equals the post itself', () => {
+    const result = listHelper.favoriteLikes(listWithOneBlog)
     expect(result).toEqual({
+      title: 'Go To Statement Considered Harmful',
       author: 'Edsger W. Dijkstra',
       likes: 5
     })
   })
 
-  test('when list has many blog posts, equals the same author sum up of likes', () => {
-    const result = listHelper.mostLikes(listWithManyBlogs)
+  test('when list has many blog posts, equals the post has most likes', () => {
+    const result = listHelper.favoriteLikes(listWithManyBlogs)
     expect(result).toEqual({
+      title: 'Canonical string reduction',
       author: 'Edsger W. Dijkstra',
-      likes: 17
+      likes: 12
     })
   })
 })

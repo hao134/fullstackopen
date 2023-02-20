@@ -34,10 +34,30 @@ const mostBlogPosts = (blogs) => {
   const countPosts = _.map(_.countBy(blogs, 'author'), (val, key) => ({ author: key, blogs : val }))
 
   const mostPosts = countPosts.reduce((prev, curr) => {
-    return prev.total > curr.total ? prev : curr
+    return prev.blogs > curr.blogs ? prev : curr
   })
 
   return mostPosts
 }
 
-module.exports = { dummy, totalLikes, favoriteLikes, mostBlogPosts }
+const mostLikes = (blogs) => {
+  if (blogs.length === 0) return null
+  if (blogs.length === 1){
+    return {
+      author: blogs[0].author,
+      likes: blogs[0].likes
+    }
+  }
+  const sumLikes = _.map(_.groupBy(blogs, 'author'), (objs, key) => ({
+    author: key,
+    likes : _.sumBy(objs, 'likes')
+  }))
+
+  const mostLikes = sumLikes.reduce((prev, curr) => {
+    return prev.likes > curr.likes ? prev : curr
+  })
+
+  return mostLikes
+}
+
+module.exports = { dummy, totalLikes, favoriteLikes, mostBlogPosts, mostLikes }

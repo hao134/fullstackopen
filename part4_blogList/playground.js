@@ -59,11 +59,15 @@ const blogs = [
     __v: 0
   }
 ]
-//_.map(_.countBy(source, "closedDate"), (val, key) => ({ date: key, total: val }))
-const count = _.map(_.countBy(blogs, 'author'), (val, key) => ({ author: key, blogs: val }))
 
-const mostLiked = count.reduce((prev, curr) => {
-  return prev.total > curr.total ? prev : curr
+const sumLikes = _.map(_.groupBy(blogs, 'author'), (objs, key) => ({
+  author: key,
+  likes : _.sumBy(objs, 'likes')
+}))
+
+const mostLikes = sumLikes.reduce((prev, curr) => {
+  return prev.likes > curr.likes ? prev : curr
 })
-console.log(count)
-console.log(mostLiked)
+
+console.log(sumLikes)
+console.log(mostLikes)
