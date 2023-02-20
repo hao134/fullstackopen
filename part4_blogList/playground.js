@@ -59,9 +59,8 @@ const blogs = [
   }
 ]
 
-console.log(blogs[0].likes===5)
-const totalLikes = listWithOneBlog.reduce((total, item) => {
-  return total + item.likes
-}, 0)
+const mostLiked = blogs.reduce((prev, curr) => {
+  return prev.likes > curr.likes ? prev : curr;
+});
 
-console.log(totalLikes)
+console.log(mostLiked)
