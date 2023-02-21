@@ -1,4 +1,3 @@
-var _ = require('lodash')
 const listWithOneBlog = [
   {
     _id: '5a422aa71b54a676234d17f8',
@@ -60,14 +59,4 @@ const blogs = [
   }
 ]
 
-const sumLikes = _.map(_.groupBy(blogs, 'author'), (objs, key) => ({
-  author: key,
-  likes : _.sumBy(objs, 'likes')
-}))
-
-const mostLikes = sumLikes.reduce((prev, curr) => {
-  return prev.likes > curr.likes ? prev : curr
-})
-
-console.log(sumLikes)
-console.log(mostLikes)
+console.log(blogs[blogs.length-1])
