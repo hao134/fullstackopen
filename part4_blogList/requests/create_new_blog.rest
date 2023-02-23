@@ -2,8 +2,9 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-    "title": "shih",
+    "title": "the user root 's second blog",
     "author": "shih hao",
     "url": "www.shihhao.com",
-    "likes":100
+    "likes":200,
+    "userId":"63f71854f1b7dcecb47dcdeb"
 }
