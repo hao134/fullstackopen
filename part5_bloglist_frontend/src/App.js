@@ -8,7 +8,7 @@ import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [Message, setMessage] = useState(null)
   const [user, setUser] = useState(null)
   
 
@@ -40,9 +40,9 @@ const App = () => {
       blogService.setToken(user.token)
       setUser(user)
     } catch (exception) {
-      setErrorMessage('Wrong credentials')
+      setMessage("error: " + exception.response.data.error)
       setTimeout(() => {
-        setErrorMessage(null)
+        setMessage(null)
       }, 3000)
     }
   }
@@ -62,10 +62,14 @@ const App = () => {
         url
       })
       setBlogs(blogs.concat(blog))
-    } catch (exception) {
-      setErrorMessage('Something went wrong')
+      setMessage(`A new blog ${title} by ${author} added`)
       setTimeout(() => {
-        setErrorMessage(null)
+        setMessage(null)
+      }, 5000)
+    } catch (exception) {
+      setMessage("error: " + exception.response.data.error)
+      setTimeout(() => {
+        setMessage(null)
       }, 3000)
     }
   }
@@ -73,7 +77,8 @@ const App = () => {
   return (
     <div>
       <h1>Blogs App</h1>
-      <Notification message={errorMessage} />
+      <p>root salainen</p>
+      <Notification message={Message} />
       {!user && <LoginForm handleLogin={handleLogin} />}
       {user && <div>
         <h2>blogs</h2>
