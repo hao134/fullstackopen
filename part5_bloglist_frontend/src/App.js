@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Blogs from './components/Blogs'
 import LoginForm from "./components/LoginForm";
+import BlogForm from './components/BlogForm';
 import Notification from "./components/Notification";
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -9,6 +10,7 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [errorMessage, setErrorMessage] = useState(null)
   const [user, setUser] = useState(null)
+  
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -51,6 +53,23 @@ const App = () => {
     setUser(null);
   };
 
+  const addBlog = async (title, author, url) => {
+
+    try {
+      const blog = await blogService.create({
+        title, 
+        author,
+        url
+      })
+      setBlogs(blogs.concat(blog))
+    } catch (exception) {
+      setErrorMessage('Something went wrong')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 3000)
+    }
+  }
+
   return (
     <div>
       <h1>Blogs App</h1>
@@ -59,7 +78,9 @@ const App = () => {
       {user && <div>
         <h2>blogs</h2>
         <strong>{user.name} logged in</strong>
-        <button onClick={handleLogout}>logout</button>  
+        <button onClick={handleLogout}>logout</button>
+        <h2>create new</h2>
+        <BlogForm addBlog={addBlog} />
         <Blogs blogs={blogs} />
         </div>
       }
