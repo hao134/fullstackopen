@@ -90,6 +90,18 @@ const App = () => {
     }
   }
 
+  const deleteBlog = async (id) => {
+    try{
+      await blogService.remove(id)
+      setBlogs(blogs.filter((blog) => blog.id !== id))
+    }catch(exception) {
+      setMessage("error: " + exception.response.data.error)
+      setTimeout(() => {
+        setMessage(null)
+      }, 3000)
+    }
+  }
+
   return (
     <div>
       <h1>Blogs App</h1>
@@ -111,7 +123,12 @@ const App = () => {
         {blogs
           .sort((a,b) => b.likes - a.likes)
           .map(blog =>(
-            <Blog key={blog.id} blog={blog} addLikes={addLikes}/>
+            <Blog 
+              key={blog.id} 
+              blog={blog} 
+              addLikes={addLikes}
+              deleteBlog={deleteBlog}
+            />
         ))}
         </div>
       }
