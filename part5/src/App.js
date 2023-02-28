@@ -45,6 +45,7 @@ const App = () => {
       .then(returnedNote => {
         setNotes(notes.map(note => note.id !== id ? note : returnedNote))
       })
+      // eslint-disable-next-line no-unused-vars
       .catch(error => {
         setErrorMessage(
           `Note '${note.content}' was already removed from server`
@@ -100,7 +101,7 @@ const App = () => {
       <h1>Notes app</h1>
       <Notification message={errorMessage} />
 
-      {!user && 
+      {!user &&
         <Togglable buttonLabel="log in">
           <LoginForm
             username={username}
@@ -111,9 +112,9 @@ const App = () => {
           />
         </Togglable>
       }
-      {user && 
+      {user &&
         <div>
-          <p>{user.name} logged in</p>  
+          <p>{user.name} logged in</p>
           <Togglable buttonLabel="new note" ref={noteFormRef}>
             <NoteForm createNote={addNote}/>
           </Togglable>
