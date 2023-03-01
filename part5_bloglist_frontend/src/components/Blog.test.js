@@ -1,7 +1,8 @@
 import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import Blog from './Blog'
+import userEvent from '@testing-library/user-event'
 
 describe('<Blog />', () => {
   let component
@@ -35,5 +36,15 @@ describe('<Blog />', () => {
   test('at start the children are not displayed', () => {
     const details = component.container.querySelector('.blog-details')
     expect(details).toEqual(null)
+  })
+
+  test('after clicking the button, children are displayed', async () => {
+    const user = userEvent.setup()
+    const button = screen.getByText('show')
+    await user.click(button)
+
+    const div = component.container.querySelector('.blog-details')
+    expect(div).toHaveTextContent(blog.url)
+    expect(div).toHaveTextContent('likes: 0')
   })
 })
