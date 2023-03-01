@@ -12,7 +12,11 @@ describe('<Blog />', () => {
     title: 'Title',
     author: 'Author',
     url: 'https://www.test.com/',
-    likes: 0
+    likes: 0,
+    user: {
+      username: 'username',
+      name: 'name',
+    }
   }
 
   beforeEach(() => {
@@ -46,5 +50,16 @@ describe('<Blog />', () => {
     const div = component.container.querySelector('.blog-details')
     expect(div).toHaveTextContent(blog.url)
     expect(div).toHaveTextContent('likes: 0')
+  })
+
+  test('detect two clicks after pressing like button two times', async () => {
+    const user = userEvent.setup()
+    const show_button = screen.getByText('show')
+    await user.click(show_button)
+
+    const addlike_button = screen.getByText('like')
+    await user.click(addlike_button)
+    await user.click(addlike_button)
+    expect(addLikes.mock.calls).toHaveLength(2)
   })
 })
