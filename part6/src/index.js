@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 
-import { createStore } from 'redux'
+import {  legacy_createStore as createStore} from 'redux'
 
 const counterReducer = (state = 0, action) => {
   switch (action.type) {
@@ -49,5 +49,6 @@ const renderApp = () => {
   root.render(<App />)
 }
 
+// for the purpose of first render
 renderApp()
 store.subscribe(renderApp)
