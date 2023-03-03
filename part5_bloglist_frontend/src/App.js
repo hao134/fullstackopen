@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
+import BlogShow from './components/BlogShow'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
@@ -107,10 +108,19 @@ const App = () => {
       <h1>Blogs App</h1>
       <p>root salainen</p>
       <Notification message={Message} />
-      {!user &&
+      {!user && <div>
         <Togglable buttonLabel="log in">
           <LoginForm handleLogin={handleLogin} />
         </Togglable>
+        {blogs
+          .sort((a, b) => b.likes - a.likes)
+          .map(blog => (
+            <BlogShow
+              key={blog.id}
+              blog={blog}
+            />
+          ))}
+      </div>
       }
       {user && <div>
         <h2>blogs</h2>
