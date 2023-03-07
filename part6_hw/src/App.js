@@ -1,15 +1,17 @@
 import AnecdoteForm from './components/AnecdoteForm'
 import AnecdoteList from './components/AnecdoteList'
 import Filter from './components/Filter'
+import Notification from './components/Notification'
 
 const App = () => {
-    return (
-        <div>
-            <AnecdoteList />
-            <Filter />
-            <AnecdoteForm />
-        </div>
-    )
+  return (
+    <div>
+      <Notification />
+      <AnecdoteList />
+      <Filter />
+      <AnecdoteForm />
+    </div>
+  )
 }
 
 export default App
