@@ -4,15 +4,18 @@ import {
     setNotification,
     hideNotification,
 } from "../reducers/notificationReducer";
+import anecdoteService from '../services/anecdotes'
 
 const AnecdoteList = () => {
     const dispatch = useDispatch()
     const anecdotes = useSelector(state => state.anecdotes)
     const filter = useSelector(state => state.filter)
 
-    const handleAddVote = (id) => {
+    const handleAddVote = async (id) => {
         dispatch(addVote(id))
         const anecdote = anecdotes.find((anecdote) => anecdote.id === id)
+        const addedAnecdote = {...anecdote, votes: anecdote.votes + 1}
+        await anecdoteService.update(id, addedAnecdote)
         dispatch(setNotification(`You voted for ${anecdote.content}`))
         setTimeout(() => dispatch(hideNotification()), 5000)
     }
