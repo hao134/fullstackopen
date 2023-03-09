@@ -1,20 +1,35 @@
-import { useQuery } from 'react-query'
-import { getNotes } from './requests'
+import { useQuery, useMutation, useQueryClient } from 'react-query'
+import { getNotes, createNote, updateNote } from './requests'
 
 const App = () => {
+  const queryClient = useQueryClient()
+
+  const newNoteMutation = useMutation(createNote, {
+    onSuccess: () => {
+      // The correct results are refreshed by invalidating itself(notes)
+      queryClient.invalidateQueries('notes')
+    }
+  })
+
   const addNote = async (event) => {
     event.preventDefault()
     const content = event.target.note.value
     event.target.note.value = ''
-    console.log(content)
+    newNoteMutation.mutate({ content, important: true })
   }
 
+  const updateNoteMutation = useMutation(updateNote, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('notes')
+    },
+  })
+
+
   const toggleImportance = (note) => {
-    console.log('toggle importance of', note.id)
+    updateNoteMutation.mutate({...note, important: !note.important })
   }
 
   const result = useQuery('notes', getNotes)
-  console.log(result)
 
   if (result.isLoading) {
     return <div>loading data...</div>
