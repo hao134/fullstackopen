@@ -3,7 +3,7 @@
     {
       "content": "If it hurts, do it more often",
       "id": "47145",
-      "votes": 6
+      "votes": 7
     },
     {
       "content": "Adding manpower to a late software project makes it later!",
@@ -13,7 +13,7 @@
     {
       "content": "The first 90 percent of the code accounts for the first 10 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.",
       "id": "69581",
-      "votes": 12
+      "votes": 16
     },
     {
       "content": "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
@@ -23,7 +23,7 @@
     {
       "content": "Premature optimization is the root of all evil.",
       "id": "25170",
-      "votes": 7
+      "votes": 8
     },
     {
       "content": "Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.",
@@ -32,7 +32,7 @@
     },
     {
       "content": "can be added?",
-      "votes": 10,
+      "votes": 12,
       "id": "FN_Z6T2"
     },
     {
@@ -42,13 +42,23 @@
     },
     {
       "content": "can be add with react thunk?",
-      "votes": 4,
+      "votes": 6,
       "id": "9mXNmNw"
     },
     {
       "content": "test just test",
       "votes": 1,
       "id": "02n5gz_"
+    },
+    {
+      "content": "today is 3/9",
+      "votes": 2,
+      "id": "YrKQ8Cq"
+    },
+    {
+      "content": "Notification func is improved at 2023.3.9",
+      "votes": 18,
+      "id": "7lXVJGD"
     }
   ]
 }
