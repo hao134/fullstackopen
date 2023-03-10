@@ -17,23 +17,13 @@
     },
     {
       "content": "is toggle update work?",
-      "important": true,
+      "important": false,
       "id": 4
     },
     {
       "content": "can work?",
-      "important": false,
+      "important": true,
       "id": 5
-    },
-    {
-      "content": "test",
-      "important": false,
-      "id": 6
-    },
-    {
-      "content": "automatically updated?",
-      "important": false,
-      "id": 7
     }
   ]
 }

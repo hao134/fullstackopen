@@ -5,9 +5,9 @@ const App = () => {
   const queryClient = useQueryClient()
 
   const newNoteMutation = useMutation(createNote, {
-    onSuccess: () => {
-      // The correct results are refreshed by invalidating itself(notes)
-      queryClient.invalidateQueries('notes')
+    onSuccess: (newNote) => {
+      const notes = queryClient.getQueryData('notes')
+      queryClient.setQueryData('notes', notes.concat(newNote))
     }
   })
 
@@ -24,12 +24,13 @@ const App = () => {
     },
   })
 
-
   const toggleImportance = (note) => {
     updateNoteMutation.mutate({...note, important: !note.important })
   }
 
-  const result = useQuery('notes', getNotes)
+  const result = useQuery('notes', getNotes,{
+    refetchOnWindowFocus: false
+  })
 
   if (result.isLoading) {
     return <div>loading data...</div>
