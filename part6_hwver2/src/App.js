@@ -3,8 +3,8 @@ import Notification from './components/Notification'
 import { useQuery } from 'react-query'
 import { getAnecdotes } from './requests'
 
-const App = () => {
 
+const App = () => {
   const handleVote = (anecdote) => {
     console.log('vote')
   }
