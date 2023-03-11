@@ -19,9 +19,14 @@ const App = () => {
   }
 
   const updateNoteMutation = useMutation(updateNote, {
-    onSuccess: () => {
-      queryClient.invalidateQueries('notes')
-    },
+    onSuccess: (updateNote) => {
+      const notes = queryClient.getQueryData('notes')
+      queryClient.setQueriesData(
+        'notes',
+        notes.map(note=>
+          note.id !== updateNote.id ? note : updateNote
+        ))
+    }
   })
 
   const toggleImportance = (note) => {
@@ -31,6 +36,8 @@ const App = () => {
   const result = useQuery('notes', getNotes,{
     refetchOnWindowFocus: false
   })
+
+  console.log(result)
 
   if (result.isLoading) {
     return <div>loading data...</div>
