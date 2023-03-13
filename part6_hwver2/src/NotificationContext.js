@@ -8,6 +8,8 @@ const setNotificationReducer = (state, action) => {
       return `CREATE ${action.payload}`
     case "ERASE":
       return null
+    case "ERROR":
+      return `Error ${action.payload}`
     default:
       return state
   }
