@@ -1,89 +1,69 @@
-import { useState, useEffect } from 'react'
-import {
-  Routes,
-  Route,
-  useMatch,
-  useNavigate
-} from "react-router-dom"
-import Menu from './components/Menu'
-import Anecdote from './components/Anecdote'
-import AnecdoteList from './components/AnecdoteList'
-import About from './components/About'
-import Footer from './components/Footer'
-import CreateNew from './components/CreateNew'
-import Notification from './components/Notification'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 
+const useField = (type) => {
+  const [value, setValue] = useState('')
 
-const App = () => {
-  const [anecdotes, setAnecdotes] = useState([
-    {
-      content: 'If it hurts, do it more often',
-      author: 'Jez Humble',
-      info: 'https://martinfowler.com/bliki/FrequencyReducesDifficulty.html',
-      votes: 0,
-      id: 1
-    },
-    {
-      content: 'Premature optimization is the root of all evil',
-      author: 'Donald Knuth',
-      info: 'http://wiki.c2.com/?PrematureOptimization',
-      votes: 0,
-      id: 2
-    }
-  ])
-
-  const [notification, setNotification] = useState(null)
-  // clear notification after 3 seconds
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setNotification(null)
-    }, 3000)
-    return () => {
-      clearTimeout(timer)
-    }
-  }, [notification])
-
-  const navigate = useNavigate()
-
-  const addNew = (anecdote) => {
-    anecdote.id = Math.round(Math.random() * 10000)
-    setAnecdotes(anecdotes.concat(anecdote))
-    navigate("/")
-    setNotification(`A new anecdote ${anecdote.content} created`)
+  const onChange = (event) => {
+    setValue(event.target.value)
   }
 
-  // const anecdoteById = (id) =>
-  //   anecdotes.find(a => a.id === id)
+  return {
+    type,
+    value,
+    onChange
+  }
+}
 
-  // const vote = (id) => {
-  //   const anecdote = anecdoteById(id)
+const useCountry = (name) => {
+  const [country, setCountry] = useState(null)
 
-  //   const voted = {
-  //     ...anecdote,
-  //     votes: anecdote.votes + 1
-  //   }
+  useEffect(() => {})
 
-  //   setAnecdotes(anecdotes.map(a => a.id === id ? voted : a))
-  // }
+  return country
+}
 
-  const match = useMatch('/anecdotes/:id')
+const Country = ({ country }) => {
+  if (!country) {
+    return null
+  }
 
-  const anecdote = match
-    ? anecdotes.find(anecdote => anecdote.id === Number(match.params.id))
-    : null
+  if (!country.found) {
+    return (
+      <div>
+        not found...
+      </div>
+    )
+  }
 
   return (
     <div>
-      <h1>Software anecdotes</h1>
-      <Menu />
-      <Notification notification={notification}/>
-      <Routes>
-        <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/create" element={<CreateNew addNew={addNew} />} />
-        <Route path="/anecdotes/:id" element={<Anecdote anecdote={anecdote} />} />
-      </Routes>
-      <Footer />
+      <h3>{country.data.name} </h3>
+      <div>capital {country.data.capital} </div>
+      <div>population {country.data.population}</div> 
+      <img src={country.data.flag} height='100' alt={`flag of ${country.data.name}`}/>  
+    </div>
+  )
+}
+
+const App = () => {
+  const nameInput = useField('text')
+  const [name, setName] = useState('')
+  const country = useCountry(name)
+
+  const fetch = (e) => {
+    e.preventDefault()
+    setName(nameInput.value)
+  }
+
+  return (
+    <div>
+      <form onSubmit={fetch}>
+        <input {...nameInput} />
+        <button>find</button>
+      </form>
+
+      <Country country={country} />
     </div>
   )
 }
