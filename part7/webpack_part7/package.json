@@ -3,11 +3,15 @@
     "version": "0.0.1",
     "description": "practising webpack",
     "scripts": {
-      "build": "webpack --mode=development"
+        "build": "webpack --mode=development"
     },
     "license": "MIT",
     "devDependencies": {
         "webpack": "^5.76.2",
         "webpack-cli": "^5.0.1"
+    },
+    "dependencies": {
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0"
     }
 }
