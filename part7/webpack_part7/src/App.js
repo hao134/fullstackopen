@@ -1,9 +1,15 @@
-import React from 'react' // we need this now also in component files
+import React, { useState } from 'react'
+import './index.css'
 
 const App = () => {
+  const [counter, setCounter] = useState(0)
+
   return (
-    <div>
-      hello webpack
+    <div className="container">
+      hello webpack {counter} clicks
+      <button onClick={() => setCounter(counter + 1)}>
+        press
+      </button>
     </div>
   )
 }
