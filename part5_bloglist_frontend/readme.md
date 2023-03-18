@@ -1,0 +1,1 @@
+server: part4_blogList -> npm run dev
