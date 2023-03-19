@@ -7,12 +7,14 @@ import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import { useDispatch } from "react-redux";
+import { NOTIFICATION } from "./reducers/notificationReducer";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [Message, setMessage] = useState(null);
   const [user, setUser] = useState(null);
   const blogFormRef = useRef();
+  const dispatch = useDispatch()
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -37,10 +39,7 @@ const App = () => {
       blogService.setToken(user.token);
       setUser(user);
     } catch (exception) {
-      setMessage("error: " + exception.response.data.error);
-      setTimeout(() => {
-        setMessage(null);
-      }, 3000);
+      dispatch(NOTIFICATION('error: ' + exception.response.data.error, 3))
     }
   };
 
@@ -58,15 +57,9 @@ const App = () => {
         url,
       });
       setBlogs(blogs.concat(blog));
-      setMessage(`A new blog ${title} by ${author} added`);
-      setTimeout(() => {
-        setMessage(null);
-      }, 5000);
+      dispatch(NOTIFICATION(`A new blog ${title} by ${author} added`, 3))
     } catch (exception) {
-      setMessage("error: " + exception.response.data.error);
-      setTimeout(() => {
-        setMessage(null);
-      }, 3000);
+      dispatch(NOTIFICATION('error: ' + exception.response.data.error, 3))
     }
   };
 
@@ -74,11 +67,9 @@ const App = () => {
     try {
       const updatedBlog = await blogService.update(id, changedBlog);
       setBlogs(blogs.map((blog) => (blog.id !== id ? blog : updatedBlog)));
+      dispatch(NOTIFICATION(`You voted for ${changedBlog.title}`, 3))
     } catch (exception) {
-      setMessage("error: " + exception.response.data.error);
-      setTimeout(() => {
-        setMessage(null);
-      }, 3000);
+      dispatch(NOTIFICATION('error: ' + exception.response.data.error, 3))
     }
   };
 
@@ -87,10 +78,7 @@ const App = () => {
       await blogService.remove(id);
       setBlogs(blogs.filter((blog) => blog.id !== id));
     } catch (exception) {
-      setMessage("error: " + exception.response.data.error);
-      setTimeout(() => {
-        setMessage(null);
-      }, 3000);
+      dispatch(NOTIFICATION('error: ' + exception.response.data.error, 3))
     }
   };
 
@@ -98,7 +86,7 @@ const App = () => {
     <div>
       <h1>Blogs App</h1>
       <p>root salainen</p>
-      <Notification message={Message} />
+      <Notification />
       {!user && (
         <div>
           <Togglable buttonLabel="log in">
