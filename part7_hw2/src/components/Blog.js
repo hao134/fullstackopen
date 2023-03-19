@@ -1,26 +1,25 @@
-import { useState } from "react";
+import { useDispatch } from "react-redux"
+import { AddLike, deleteBlog } from "../reducers/blogReducer";
+import { useState } from 'react'
 
-const Blog = ({ blog, addLikes, deleteBlog }) => {
-  const [visible, setVisible] = useState(false);
+const Blog = ({ blog }) => {
+  const [visible, setVisible] = useState(false)
+  const dispatch = useDispatch()
   const toggleVisibility = () => {
     setVisible(!visible);
-  };
-  const handleLike = () => {
-    const changedBlog = {
-      title: blog.title,
-      author: blog.author,
-      url: blog.url,
-      likes: blog.likes + 1,
-      user: blog.user.id,
-    };
-    addLikes(blog.id, changedBlog);
-  };
+  }
+
+  const handleAddLike = async () => {
+    const addedBlog = {...blog, likes: blog.likes + 1, user: blog.user.id }
+    dispatch(AddLike(blog.id, addedBlog))
+  }
 
   const handleDelete = () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      deleteBlog(blog.id);
+      dispatch(deleteBlog(blog))
     }
-  };
+  }
+
   return (
     <div className="blog">
       <div>
@@ -35,15 +34,13 @@ const Blog = ({ blog, addLikes, deleteBlog }) => {
           <div>url: {blog.url}</div>
           <div>
             likes: {blog.likes}{" "}
-            <button onClick={handleLike} id="like-button">
+            <button onClick={handleAddLike} id="like-button">
               like
             </button>
           </div>
           <div>author: {blog.author}</div>
           <div>
-            <button onClick={handleDelete} id="delete-button">
-              Remove
-            </button>
+            <button onClick={handleDelete} id="delete-button">Remove</button>
           </div>
         </div>
       )}

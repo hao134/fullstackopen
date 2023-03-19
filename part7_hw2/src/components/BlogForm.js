@@ -1,46 +1,38 @@
-import { useState } from "react";
+import { useDispatch } from 'react-redux'
+import { createBlog } from "../reducers/blogReducer"
+import { NOTIFICATION } from '../reducers/notificationReducer'
 
-const BlogForm = ({ addBlog }) => {
-  const [newBlog, setNewBlog] = useState({ title: "", author: "", url: "" });
+const BlogForm = () => {
+  const dispatch = useDispatch()
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setNewBlog({ ...newBlog, [name]: value });
-  };
-
-  const handleAddBlog = (event) => {
-    event.preventDefault();
-    addBlog(newBlog.title, newBlog.author, newBlog.url);
-    setNewBlog({ title: "", author: "", url: "" });
-  };
+  const handleAddBlog = async (event) => {
+    event.preventDefault()
+    const newBlog = {
+      title: event.target.title.value,
+      author: event.target.author.value,
+      url: event.target.url.value
+    }
+    event.target.title.value = ''
+    event.target.author.value = ''
+    event.target.url.value = ''
+    dispatch(createBlog(newBlog))
+    dispatch(NOTIFICATION(`A new blog ${newBlog.title} by ${newBlog.author} added`, 3))
+  }
+  
   return (
+    <div>
     <form onSubmit={handleAddBlog}>
       <div>
         title:{" "}
-        <input
-          name="title"
-          id="title"
-          value={newBlog.title}
-          onChange={handleChange}
-        />
+        <input name="title" id="title" />
       </div>
       <div>
         author:{" "}
-        <input
-          name="author"
-          id="author"
-          value={newBlog.author}
-          onChange={handleChange}
-        />
+        <input name="author" id="author" />
       </div>
       <div>
         url:{" "}
-        <input
-          name="url"
-          id="url"
-          value={newBlog.url}
-          onChange={handleChange}
-        />
+        <input name="url" id="url" />
       </div>
       <div>
         <button type="submit" id="create-blog">
@@ -48,6 +40,7 @@ const BlogForm = ({ addBlog }) => {
         </button>
       </div>
     </form>
+    </div>
   );
 };
 
