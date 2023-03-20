@@ -17,6 +17,7 @@ const LoginForm = () => {
   return (
     <form onSubmit={onSubmit}>
       <h2>log in to application</h2>
+      <p>root salainen</p>
       <div>
         username
         <input type="text" id="username" name="username"/>

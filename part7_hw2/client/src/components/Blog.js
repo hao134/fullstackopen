@@ -1,13 +1,9 @@
 import { useDispatch } from "react-redux"
 import { AddLike, deleteBlog } from "../reducers/blogReducer";
-import { useState } from 'react'
+import { Button } from "@mui/material"
 
 const Blog = ({ blog }) => {
-  const [visible, setVisible] = useState(false)
   const dispatch = useDispatch()
-  const toggleVisibility = () => {
-    setVisible(!visible);
-  }
 
   const handleAddLike = async () => {
     const addedBlog = {...blog, likes: blog.likes + 1, user: blog.user.id }
@@ -22,28 +18,32 @@ const Blog = ({ blog }) => {
 
   return (
     <div className="blog">
+      <h2>
+        {blog.title} - {blog.author}
+      </h2>
+      <a href={blog.url}>{blog.url}</a>
       <div>
-        <span className="title">{blog.title} - </span>
-        <span className="author">{blog.author} </span>
-        <button onClick={toggleVisibility} id="show-button">
-          {visible ? "hide" : "show"}
-        </button>
+        {blog.likes} likes{' '}
+        <Button
+          variant="contained"
+          color="primary"
+          size="small"
+          onClick={handleAddLike}
+        >
+          like
+        </Button>{" "}
+        <Button
+          variant="contained"
+          color="error"
+          size="small"
+          onClick={handleDelete}
+        >
+          delete
+        </Button>
       </div>
-      {visible && (
-        <div className="blog-details">
-          <div>url: {blog.url}</div>
-          <div>
-            likes: {blog.likes}{" "}
-            <button onClick={handleAddLike} id="like-button">
-              like
-            </button>
-          </div>
-          <div>author: {blog.author}</div>
-          <div>
-            <button onClick={handleDelete} id="delete-button">Remove</button>
-          </div>
-        </div>
-      )}
+      <div>
+        added by <strong>{blog.user.name}</strong>
+      </div>
     </div>
   );
 };

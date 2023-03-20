@@ -1,68 +1,64 @@
-import { useEffect, useRef } from "react";
-import Blog from "./components/Blog";
-import BlogShow from "./components/BlogShow";
+import { useEffect } from "react";
 import LoginForm from "./components/LoginForm";
-import BlogForm from "./components/BlogForm";
 import Notification from "./components/Notification";
-import Togglable from "./components/Togglable";
 import { useDispatch, useSelector } from "react-redux";
-import { initializeBlogs } from "./reducers/blogReducer";
-import { loggedUser, logOutUser } from "./reducers/loginReducer";
+import { loggedUser } from "./reducers/loginReducer";
+import { initializeUsers } from "./reducers/userReducer";
+import {
+  Routes, Route, useMatch
+} from 'react-router-dom'
+import Menu from "./components/Menu"
+import Users from "./components/Users"
+import User from './components/User'
+import BlogList from "./components/BlogList"
+import Blog from "./components/Blog";
+import { Container } from "@mui/material"
 
 const App = () => {
   const dispatch = useDispatch()
   useEffect(() => {
     dispatch(loggedUser())
-    dispatch(initializeBlogs())
-  },[dispatch])
+    dispatch(initializeUsers())
+  }, [dispatch])
 
   const user = useSelector(state => state.login)
+  const users = useSelector(state => state.users)
   const blogs = useSelector(state => state.blogs)
   const Blogs = [...blogs]
-  const blogFormRef = useRef();
+  
+  const matchUser = useMatch('/users/:id')
+  const userId = matchUser
+    ? users.find((user) => user.id === matchUser.params.id)
+    : null
 
-  const handleLogout = () => {
-    dispatch(logOutUser())
-  };
+  const matchBlog = useMatch('/blogs/:id')
+  const blogId = matchBlog
+    ? Blogs.find((blog) => blog.id === matchBlog.params.id)
+    : null
 
   return (
-    <div>
-      <h1>Blogs App</h1>
-      <p>root salainen</p>
-      <Notification />
-      {!user && (
+    <Container>
+      {user === null ? (
         <div>
-          <Togglable buttonLabel="log in">
-            <LoginForm />
-          </Togglable>
-          {Blogs
-            .sort((a, b) => b.likes - a.likes)
-            .map((blog) => (
-              <BlogShow key={blog.id} blog={blog} />
-            ))}
+          <Notification/>
+          <LoginForm />
+        </div>
+      ) : (
+        <div>
+          <h1>Blogs App</h1>
+          <Menu />
+          <Notification />
+          <Routes>
+            <Route path="/blogs" element={<BlogList />} />
+            <Route path="/blogs/:id" element={<Blog blog={blogId} />} /> 
+            <Route path="/users" element={<Users users={users} />} />
+            <Route path="/users/:id" element={<User user={userId} />} />
+            
+          </Routes>
         </div>
       )}
-      {user && (
-        <div>
-          <h2>blogs</h2>
-          <strong>{user.name} logged in</strong>
-          <button onClick={handleLogout}>logout</button>
-          <h2>create new</h2>
-          <Togglable buttonLabel="new blog" ref={blogFormRef}>
-            <BlogForm />
-          </Togglable>
-          {Blogs
-            .sort((a, b) => b.likes - a.likes)
-            .map((blog) => (
-              <Blog
-                key={blog.id}
-                blog={blog}
-              />
-            ))}
-        </div>
-      )}
-    </div>
-  );
-};
+    </Container>
+  )
+}
 
 export default App;
