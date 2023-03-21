@@ -2,6 +2,7 @@ import { useDispatch } from "react-redux"
 import { AddLike, deleteBlog } from "../reducers/blogReducer";
 import { Button } from "@mui/material"
 import { useNavigate } from "react-router-dom";
+import Comments from "./Comments";
 
 const Blog = ({ blog, user }) => {
   const dispatch = useDispatch()
@@ -50,6 +51,8 @@ const Blog = ({ blog, user }) => {
       <div>
         added by <strong>{blog.user.name}</strong>
       </div>
+      <hr/>
+      <Comments blog={blog}/>
     </div>
   );
 };

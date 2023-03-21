@@ -46,8 +46,8 @@ export const AddLike = (id, blog) => {
       const likedBlog = await blogService.update(id, blog)
       dispatch(updateBlog(likedBlog))
       dispatch(NOTIFICATION(`You voted for ${blog.title}`, 3))
-    }catch (error){
-      dispatch(NOTIFICATION(`error ${error.response.data.error}`, 3))
+    }catch (exception){
+      dispatch(NOTIFICATION(`error ${exception.response.data.error}`, 3))
     }
     
   }
@@ -59,8 +59,20 @@ export const deleteBlog = (blog) => {
       await blogService.remove(blog.id)
       dispatch(removeBlog(blog.id))
       dispatch(NOTIFICATION(`${blog.title} by ${blog.author} removed`, 3))
-    } catch (error) {
-      dispatch(NOTIFICATION(`error ${error.response.data.error}`))
+    } catch (exception) {
+      dispatch(NOTIFICATION(`error ${exception.response.data.error}`))
+    }
+  }
+}
+
+export const createComment = (id, comment) => {
+  return async dispatch => {
+    try {
+      const commentedBlog = await blogService.addComment(id, comment)
+      dispatch(updateBlog(commentedBlog))
+      dispatch(NOTIFICATION(`Comment ${comment} added`, 3))
+    } catch (exception) {
+      dispatch(NOTIFICATION(`error ${exception.response.data.error}`, 3))
     }
   }
 }
