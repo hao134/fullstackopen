@@ -11,7 +11,7 @@ import {
     TableCell,
     TableContainer,
     TableRow,
-    Paper,
+    Paper
 } from "@mui/material";
 
 const BlogList = () => {
@@ -27,8 +27,7 @@ const BlogList = () => {
 
     return (
         <div>
-            <h2>Blogs App</h2>
-            <h3>create new</h3>
+            <h2>Create new</h2>
             <Togglable buttonLabel="new blog" ref={blogFormRef}>
                 <BlogForm />
             </Togglable>

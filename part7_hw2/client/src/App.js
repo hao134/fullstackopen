@@ -10,6 +10,7 @@ import {
 import Menu from "./components/Menu"
 import Users from "./components/Users"
 import User from './components/User'
+import Home from "./components/Home";
 import BlogList from "./components/BlogList"
 import Blog from "./components/Blog";
 import { Container } from "@mui/material"
@@ -49,8 +50,9 @@ const App = () => {
           <Menu />
           <Notification />
           <Routes>
+            <Route path="/" element={<Home/>} />
             <Route path="/blogs" element={<BlogList />} />
-            <Route path="/blogs/:id" element={<Blog blog={blogId} />} /> 
+            <Route path="/blogs/:id" element={<Blog blog={blogId} user={user} />} /> 
             <Route path="/users" element={<Users users={users} />} />
             <Route path="/users/:id" element={<User user={userId} />} />
             

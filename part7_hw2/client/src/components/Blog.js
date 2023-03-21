@@ -1,9 +1,11 @@
 import { useDispatch } from "react-redux"
 import { AddLike, deleteBlog } from "../reducers/blogReducer";
 import { Button } from "@mui/material"
+import { useNavigate } from "react-router-dom";
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, user }) => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const handleAddLike = async () => {
     const addedBlog = {...blog, likes: blog.likes + 1, user: blog.user.id }
@@ -13,6 +15,7 @@ const Blog = ({ blog }) => {
   const handleDelete = () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
       dispatch(deleteBlog(blog))
+      navigate('/blogs')
     }
   }
 
@@ -32,14 +35,17 @@ const Blog = ({ blog }) => {
         >
           like
         </Button>{" "}
-        <Button
-          variant="contained"
-          color="error"
-          size="small"
-          onClick={handleDelete}
-        >
-          delete
-        </Button>
+        {user.username === blog.user.username && (
+          <Button
+            variant="contained"
+            color="error"
+            size="small"
+            onClick={handleDelete}
+          >
+            delete
+          </Button>
+        )}
+        
       </div>
       <div>
         added by <strong>{blog.user.name}</strong>
