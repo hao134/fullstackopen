@@ -1,10 +1,12 @@
 const User = ({ user }) => {
-  if (!user) {return null}
-  const { name, blogs } = user
+  if (!user) {
+    return null;
+  }
+  const { name, blogs } = user;
 
   return (
     <div>
-      <h2>{ name }</h2>
+      <h2>{name}</h2>
       {blogs.length > 0 ? (
         <div>
           <p>
@@ -16,11 +18,11 @@ const User = ({ user }) => {
             ))}
           </ul>
         </div>
-      ):(
+      ) : (
         <p>no blogs yet...</p>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default User
+export default User;

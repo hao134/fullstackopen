@@ -1,24 +1,24 @@
-import { useDispatch } from "react-redux"
+import { useDispatch } from "react-redux";
 import { AddLike, deleteBlog } from "../reducers/blogReducer";
-import { Button } from "@mui/material"
+import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Comments from "./Comments";
 
 const Blog = ({ blog, user }) => {
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleAddLike = async () => {
-    const addedBlog = {...blog, likes: blog.likes + 1, user: blog.user.id }
-    dispatch(AddLike(blog.id, addedBlog))
-  }
+    const addedBlog = { ...blog, likes: blog.likes + 1, user: blog.user.id };
+    dispatch(AddLike(blog.id, addedBlog));
+  };
 
   const handleDelete = () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      dispatch(deleteBlog(blog))
-      navigate('/blogs')
+      dispatch(deleteBlog(blog));
+      navigate("/blogs");
     }
-  }
+  };
 
   return (
     <div className="blog">
@@ -27,7 +27,7 @@ const Blog = ({ blog, user }) => {
       </h2>
       <a href={blog.url}>{blog.url}</a>
       <div>
-        {blog.likes} likes{' '}
+        {blog.likes} likes{" "}
         <Button
           variant="contained"
           color="primary"
@@ -46,13 +46,12 @@ const Blog = ({ blog, user }) => {
             delete
           </Button>
         )}
-        
       </div>
       <div>
         added by <strong>{blog.user.name}</strong>
       </div>
-      <hr/>
-      <Comments blog={blog}/>
+      <hr />
+      <Comments blog={blog} />
     </div>
   );
 };

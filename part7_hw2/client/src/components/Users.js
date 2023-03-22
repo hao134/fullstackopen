@@ -1,12 +1,12 @@
 import {
-    Table,
-    TableHead,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableRow,
-    Paper,
-  } from "@mui/material";
+  Table,
+  TableHead,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Paper,
+} from "@mui/material";
 import { Link } from "react-router-dom";
 
 const Users = ({ users }) => {
@@ -22,7 +22,7 @@ const Users = ({ users }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map((user) =>(
+            {users.map((user) => (
               <TableRow key={user.id}>
                 <TableCell>
                   <Link to={`/users/${user.id}`}>{user.username}</Link>
@@ -34,7 +34,7 @@ const Users = ({ users }) => {
         </Table>
       </TableContainer>
     </div>
-  )
-}
+  );
+};
 
-export default Users
+export default Users;
