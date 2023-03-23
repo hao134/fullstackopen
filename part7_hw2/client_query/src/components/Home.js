@@ -9,7 +9,7 @@ const Home = () => {
         retry: 1,
         refetchOnWindowFocus: false
       }
-    )
+  )
   if ( result.isLoading ) {
     return <div>loading data...</div>
   }

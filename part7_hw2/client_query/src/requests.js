@@ -12,3 +12,6 @@ export const login = (credentials) => {
 export const getUser = (id) => {
   axios.get(`${baseUrl}/${id}`).then(res => res.data);
 };
+
+export const createBlog = newBlog =>
+  axios.post(baseUrl, newBlog).then(res => res.data)

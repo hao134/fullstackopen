@@ -1,27 +1,29 @@
-import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
-//import { login } from "../requests";
-import blogService from "../services/blogs";
+//import blogService from "../services/blogs";
 import axios from "axios";
+import { useField } from "../hooks";
+import { TextField, Button } from "@mui/material";
 
 
 const LoginForm = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const { reset: resetUsername, ...username } = useField('text')
+  const { reset: resetPassword, ...password } = useField('password')
+
   const queryClient = useQueryClient()
   
   const loginMutation = useMutation(
     async () => {
-      const response = await axios.post('/api/login', {
-        username,
-        password,
-      })
+      const loginUser = {
+        username: username.value,
+        password: password.value,
+      };
+      const response = await axios.post('/api/login', loginUser)
       return response.data
     }, {
       onSuccess: (data) => {
         queryClient.invalidateQueries('login')
         window.localStorage.setItem("loggedBlogappUser", JSON.stringify(data))
-        blogService.setToken(data.token)
+        //blogService.setToken(data.token)
         window.location.reload()
       }
   })
@@ -29,37 +31,27 @@ const LoginForm = () => {
   const onSubmit = (event) => {
     event.preventDefault();
     loginMutation.mutate()
-    setUsername("");
-    setPassword("");
-    //queryClient.invalidateQueries('accessUser')
+    resetUsername()
+    resetPassword()
   };
 
   return (
     <form onSubmit={onSubmit}>
       <h2>log in to application</h2>
-      <div>
-        username
-        <input
-          type="text"
-          id="username"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
+      <div style={{ marginBottom : "0.5rem" }}>
+        <TextField label="username" id="username" {...username} />
       </div>
-      <div>
-        password
-        <input
-          type="password"
-          id="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
+      <div style={{ marginBottom : "0.5rem" }}>
+        <TextField label="password" id="password" {...password} />
       </div>
-      <button type="submit" id="login-button">
-        login
-      </button>
+      <Button
+          variant='contained'
+          color="primary"
+          type="submit"
+          id="login-button"
+        >
+          login
+        </Button>
     </form>
   );
 };
