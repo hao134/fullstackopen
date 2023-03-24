@@ -45,6 +45,13 @@ const resolvers = {
     allPersons: () => persons,
     findPerson: (root, args) =>
       persons.find(p => p.name === args.name)
+  },
+  Person: {
+    street: (root) => "Dashe",
+    city: (root) => "Kaohsiung",
+    name: (root) => root.name,
+    phone: (root) => root.phone,
+    id: (root) => root.id
   }
 }
 
