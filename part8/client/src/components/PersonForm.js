@@ -1,33 +1,39 @@
 import { useState } from 'react'
 import { useMutation } from '@apollo/client'
-import { ALL_PERSONS, CREATE_PERSON } from '../queries'
 
+import { CREATE_PERSON, ALL_PERSONS } from '../queries'
 
-
-
-const PersonForm = ( props ) => {
+const PersonForm = ({ setError }) => {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [street, setStreet] = useState('')
   const [city, setCity] = useState('')
 
+
   const [ createPerson ] = useMutation(CREATE_PERSON, {
-    refetchQueries : [ { query: ALL_PERSONS } ]
+    refetchQueries: [ { query: ALL_PERSONS } ],
+    onError: (error) => {
+      error.graphQLErrors.length > 0
+        ? setError(error.graphQLErrors[0].message)
+        : setError('Fill out all the required fields')
+ 
+    }
   })
 
-  const submit = (event) => {
+  const submit = async (event) => {
     event.preventDefault()
 
-    createPerson({ variables: { name, phone, street, city }})
-    
+    createPerson({  variables: { name, phone, street, city } })
+
     setName('')
     setPhone('')
     setStreet('')
     setCity('')
   }
-  return(
+
+  return (
     <div>
-      <h2> create new </h2>
+      <h2>create new</h2>
       <form onSubmit={submit}>
         <div>
           name <input value={name}
