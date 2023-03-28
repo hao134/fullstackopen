@@ -16,7 +16,6 @@ const PersonForm = ({ setError }) => {
       error.graphQLErrors.length > 0
         ? setError(error.graphQLErrors[0].message)
         : setError('Fill out all the required fields')
- 
     }
   })
 
