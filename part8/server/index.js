@@ -1,6 +1,5 @@
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
-const { v1: uuid } = require('uuid')
 const { GraphQLError } = require('graphql')
 
 const mongoose = require('mongoose')
@@ -100,12 +99,36 @@ const resolvers = {
   Mutation: {
     addPerson : async (root, args) => {
       const person = new Person({ ...args })
-      return person.save()
+      try {
+        await person.save()
+      } catch (error) {
+        throw new GraphQLError('Saving person failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.name,
+            error
+          }
+        })
+      }
+
+      return person
     },
-    editNumber: (root, args) => {
-      const person = persons.findOne({ name: args.name })
+    editNumber: async (root, args) => {
+      const person = await Person.findOne({ name: args.name })
       person.phone = args.phone
-      return person.save()
+      
+      try {
+        await person.save()
+      } catch (error) {
+        throw new GraphQLError('Saving number failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.name,
+            error
+          }
+        })
+      }
+      return person
     }
   }
 }
