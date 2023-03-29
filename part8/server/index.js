@@ -3,6 +3,21 @@ const { startStandaloneServer } = require('@apollo/server/standalone')
 const { v1: uuid } = require('uuid')
 const { GraphQLError } = require('graphql')
 
+const mongoose = require('mongoose')
+mongoose.set('strictQuery', false)
+const Person = require('./models/person')
+require('dotenv').config()
+
+const MONGODB_URI = process.env.MONGODB_URI
+
+mongoose.connect(MONGODB_URI)
+  .then(() => {
+    console.log('connected to MongoDB')
+  })
+  .catch((error) => {
+    console.log('error connection to MongoDB:', error.message)
+  })
+
 let persons = [
     {
       name: "Arto Hellas",
@@ -64,17 +79,15 @@ const typeDefs = `
 `
 const resolvers = {
   Query: {
-    personCount: () => persons.length,
-    allPersons: (root, args) => {
-      if (!args.phone){
-        return persons 
+    personCount: async () => Person.collection.countDocuments(),
+    allPersons: async (root, args) => {
+      if (!args.phone) {
+        return Person.find({})
       }
-      const byPhone = (person) =>
-        args.phone === 'YES' ? person.phone : !person.phone
-      return persons.filter(byPhone)
+
+      return Person.find({ phone: { $exists: args.phone === 'YES' } })
     },
-    findPerson: (root, args) =>
-      persons.find(p => p.name === args.name)
+    findPerson: async (root, args) => Person.findOne({ name: args.name }),
   },
   Person: {
     address: (root) => {
@@ -85,30 +98,14 @@ const resolvers = {
     }
   },
   Mutation: {
-    addPerson : (root, args) => {
-      if (persons.find(p => p.name === args.name)) {
-        throw new GraphQLError('Name must be unique', {
-          extensions: {
-            code : 'BAD_USER_INPUT',
-            invalidArgs: args.name
-          }
-        })
-      }
-      
-      const person = { ...args, id: uuid() }
-      persons = persons.concat(person)
-      return person
+    addPerson : async (root, args) => {
+      const person = new Person({ ...args })
+      return person.save()
     },
-
     editNumber: (root, args) => {
-      const person = persons.find(p => p.name === args.name)
-      if (!person) {
-        return null
-      }
-
-      const updatedPerson = { ...person, phone: args.phone }
-      persons = persons.map(p => p.name === args.name ? updatedPerson : p)
-      return updatedPerson
+      const person = persons.findOne({ name: args.name })
+      person.phone = args.phone
+      return person.save()
     }
   }
 }
