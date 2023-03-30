@@ -1,5 +1,6 @@
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
+const { GraphQLError } = require('graphql')
 
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
@@ -116,26 +117,53 @@ const resolvers = {
   Mutation:{
     addBook: async (root, args) => {
       let author = await Author.findOne({ name: args.author })
+
       if (!author){
         author = new Author({ name: args.author })
-        await author.save()
+
+        try {
+          await author.save()
+        } catch (error) {
+          throw new GraphQLError('Saving book failed', {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args,
+            error
+          })
+        }
       }
 
       const book = new Book({ ...args, author: author.id })
-      return book.save()
+
+      try {
+        await book.save()
+      } catch (error) {
+        throw new GraphQLError('Saving book failed', {
+          code: 'BAD_USER_INPUT',
+          invalidArgs: args,
+          error
+        })
+      }
+
+      return book
     },
     editAuthor: async (root, args) => {
       const author = await Author.findOne({ name: args.name })
 
       if (!author) return null
 
-      const updatedAuthor = await Author.findOneAndUpdate(
-        { name: args.name }, 
-        { born: args.setBornTo }, 
-        { new: true }
-      )
+      author.born = args.setBornTo
 
-      return updatedAuthor
+      try {
+        await author.save()
+      } catch (error) {
+        throw new GraphQLError('Updating author failed', {
+          code: 'BAD_USER_INPUT',
+          invalidArgs: args,
+          error
+        })
+      }
+
+      return author
     }
   },
 }
