@@ -56,6 +56,17 @@ const typeDefs = `
     genres: [String!]!
     id: ID!
   }
+  type AuthorData {
+    name: String!
+    id: ID!
+  }
+  type BookData {
+    title: String!
+    author: AuthorData!
+    published: Int!
+    genres: [String!]!
+    id: ID!
+  }
   type User {
     username: String!
     favoriteGenre: String!
@@ -77,7 +88,7 @@ const typeDefs = `
       author: String!
       published: Int!
       genres: [String!]!
-    ): Book!
+    ): BookData!
 
     editAuthor(
       name: String!
@@ -175,7 +186,9 @@ const resolvers = {
         })
       }
 
-      return book
+      let bookData = await Book.findById(book.id).populate('author')
+      console.log(bookData)
+      return bookData
     },
     editAuthor: async (root, args, { currentUser }) => {
       if (!currentUser) {
