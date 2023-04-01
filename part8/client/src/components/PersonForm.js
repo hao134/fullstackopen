@@ -11,11 +11,15 @@ const PersonForm = ({ setError }) => {
 
 
   const [ createPerson ] = useMutation(CREATE_PERSON, {
-    refetchQueries: [ { query: ALL_PERSONS } ],
     onError: (error) => {
-      error.graphQLErrors.length > 0
-        ? setError(error.graphQLErrors[0].message)
-        : setError('Fill out all the required fields')
+      setError(error.graphQLErrors[0].message)
+    },
+    update: (cache, response) => {
+      cache.updateQuery({ query: ALL_PERSONS }, ({ allPersons }) => {
+        return {
+          allPersons: allPersons.concat(response.data.addPerson),
+        }
+      })
     }
   })
 
