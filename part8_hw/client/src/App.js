@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import Authors from './components/Authors'
 import Books from './components/Books'
@@ -13,6 +13,13 @@ const App = () => {
   const [token, setToken] = useState(null)
   const client = useApolloClient()
 
+  useEffect(() => {
+    const userFromStorage = localStorage.getItem('library-user-token')
+    if (userFromStorage) {
+      setToken(userFromStorage)
+    }
+  }, [])
+ 
   if (!token){
     return (
       <div>

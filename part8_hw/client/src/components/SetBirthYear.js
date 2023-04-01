@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useMutation } from "@apollo/client";
 import Select from 'react-select';
+import { TextField, Button } from "@mui/material";
 
 import { ALL_AUTHORS, EDIT_AUTHOR } from '../queries'
 
@@ -36,7 +37,7 @@ const SetBirthYear = ({ authors }) => {
     <div>
       <h2>Set BirthYear</h2>
       <form onSubmit={submit}>
-        <div>
+        <div style={{ marginBottom: "0.5rem" }}>
           <Select
             value={selectedOption}
             onChange={handleSelect}
@@ -44,13 +45,15 @@ const SetBirthYear = ({ authors }) => {
           />
         </div>
         <div>
-          born <input
-            type="number"
-            value={birth}
-            onChange={({ target }) => setBirth(target.value)}
-          />
+          <TextField label="born" type="number" value={birth} onChange={({ target }) => setBirth(target.value)}/>
         </div> 
-        <button type="submit">update author</button> 
+        <Button
+          variant="contained"
+          color="primary"
+          type="submit"
+        >
+          update author
+        </Button>
 
       </form>
     </div>
