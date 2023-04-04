@@ -4,6 +4,7 @@ import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
+import Recommend from './components/Recommend'
 import { useApolloClient } from '@apollo/client'
 import { Button } from "@mui/material";
 
@@ -51,6 +52,7 @@ const App = () => {
         <Button onClick={() => setPage('authors')}>authors</Button>
         <Button onClick={() => setPage('books')}>books</Button>
         <Button onClick={() => setPage('add')}>add book</Button>
+        <Button onClick={() => setPage('recommend')}>recommend</Button>
         <Button color="error" onClick={logout}>logout</Button>
       </div>
 
@@ -59,7 +61,8 @@ const App = () => {
       <Books show={page === 'books'} />
 
       <NewBook show={page === 'add'} />
-      
+
+      <Recommend show={page === 'recommend'} />
 
     </div>
   )

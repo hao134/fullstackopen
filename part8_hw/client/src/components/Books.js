@@ -16,13 +16,16 @@ import {
 const Books = (props) => {
   const [genre, setGenre] = useState('all')
   const result = useQuery(ALL_BOOKS)
-  if (result.loading){
-    return <div>loading...</div>
-  }
 
   if (!props.show) {
     return null
   }
+  
+  if (result.loading){
+    return <div>loading...</div>
+  }
+
+  
 
   const books = result.data.allBooks || []
 
