@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useMutation } from '@apollo/client'
 
 import { ADD_BOOK, ALL_BOOKS, ALL_AUTHORS } from '../queries'
+import { TextField, Button } from "@mui/material";
 
 const NewBook = (props) => {
   const [title, setTitle] = useState('')
@@ -38,39 +39,38 @@ const NewBook = (props) => {
   return (
     <div>
       <form onSubmit={submit}>
-        <div>
-          title
-          <input
+        <div style={{ marginTop: "0.5rem" }}>
+          <TextField
+            label="title"
             value={title}
             onChange={({ target }) => setTitle(target.value)}
           />
         </div>
-        <div>
-          author
-          <input
+        <div style={{ marginTop: "0.5rem" }}>
+          <TextField
+            label="author"
             value={author}
             onChange={({ target }) => setAuthor(target.value)}
           />
         </div>
-        <div>
-          published
-          <input
-            type="number"
+        <div style={{ marginTop: "0.5rem" }}>
+          <TextField
+            label="published"
             value={published}
             onChange={({ target }) => setPublished(target.value)}
           />
         </div>
         <div>
-          <input
+          <TextField
             value={genre}
             onChange={({ target }) => setGenre(target.value)}
           />
-          <button onClick={addGenre} type="button">
+          <Button onClick={addGenre} type="button">
             add genre
-          </button>
+          </Button>
         </div>
         <div>genres: {genres.join(' ')}</div>
-        <button type="submit">create book</button>
+        <Button variant='contained' type="submit">create book</Button>
       </form>
     </div>
   )

@@ -10,6 +10,7 @@ import {
   TableRow,
   Paper,
   TableHead,
+  Button
 } from "@mui/material";
 
 const Books = (props) => {
@@ -36,11 +37,11 @@ const Books = (props) => {
       </p>
       <div>
         {genres.map((genre) => (
-          <button key={genre} onClick={() => setGenre(genre)}>
+          <Button size='small' key={genre} onClick={() => setGenre(genre)}>
             {genre}
-          </button>
+          </Button>
         ))}
-        <button onClick={() => setGenre('all')}>show all</button>
+        <Button size = "small" color="success" onClick={() => setGenre('all')}>show all</Button>
       </div>
       <TableContainer component={Paper}>
         <Table>

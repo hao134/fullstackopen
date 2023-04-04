@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useMutation } from '@apollo/client'
 import { LOGIN } from '../queries'
+import { TextField, Button } from "@mui/material";
 
 const LoginForm = (props) => {
   const [username, setUsername] = useState('')
@@ -33,20 +34,28 @@ const LoginForm = (props) => {
   return (
     <div>
       <form onSubmit={submit}>
-        <div>
-          username <input
-            value={username}
+        <div style={{ marginTop: "0.5rem" }}>
+          <TextField 
+            label="username" 
+            value={username} 
             onChange={({ target }) => setUsername(target.value)}
           />
         </div>
-        <div>
-          password <input
-            type='password'
-            value={password}
+        <div style={{ marginTop: "0.5rem" }}>
+          <TextField 
+            type="password"
+            label="password" 
+            value={password} 
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-        <button type="submit">login</button>
+        <Button
+          variant='contained'
+          color="primary"
+          type="submit"
+        >
+          login
+        </Button>
       </form>
     </div>
   )

@@ -5,6 +5,7 @@ import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
 import { useApolloClient } from '@apollo/client'
+import { Button } from "@mui/material";
 
 
 
@@ -24,9 +25,9 @@ const App = () => {
     return (
       <div>
         <div>
-          <button onClick={() => setPage('authors')}>authors</button>
-          <button onClick={() => setPage('books')}>books</button>
-          <button onClick={() => setPage('login')}>login</button>
+          <Button onClick={() => setPage('authors')}>authors</Button>
+          <Button onClick={() => setPage('books')}>books</Button>
+          <Button onClick={() => setPage('login')}>login</Button>
         </div>
   
         <Authors show={page === 'authors'} />
@@ -47,10 +48,10 @@ const App = () => {
   return (
     <div>
       <div>
-        <button onClick={() => setPage('authors')}>authors</button>
-        <button onClick={() => setPage('books')}>books</button>
-        <button onClick={() => setPage('add')}>add book</button>
-        <button onClick={logout}>logout</button>
+        <Button onClick={() => setPage('authors')}>authors</Button>
+        <Button onClick={() => setPage('books')}>books</Button>
+        <Button onClick={() => setPage('add')}>add book</Button>
+        <Button color="error" onClick={logout}>logout</Button>
       </div>
 
       <Authors show={page === 'authors'} />
