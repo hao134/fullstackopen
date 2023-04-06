@@ -4,6 +4,9 @@ const Book = require('./models/book')
 const User = require('./models/user')
 const jwt = require('jsonwebtoken')
 
+const { PubSub } = require('graphql-subscriptions')
+const pubsub = new PubSub()
+
 const resolvers = {
     Query: {
       authorCount: async () => Author.collection.countDocuments(),
@@ -72,7 +75,8 @@ const resolvers = {
           }
         }
   
-        const book = new Book({ ...args, author: author.id })
+        //const book = new Book({ ...args, author: author.id })
+        const book = new Book({ ...args, author })
   
         try {
           await book.save()
@@ -84,9 +88,9 @@ const resolvers = {
           })
         }
   
-        let bookData = await Book.findById(book.id).populate('author')
-        console.log(bookData)
-        return bookData
+        // let bookData = await Book.findById(book.id).populate('author')
+        pubsub.publish('BOOK_ADDED', { bookAdded : book })
+        return book
       },
       editAuthor: async (root, args, { currentUser }) => {
         if (!currentUser) {
@@ -148,6 +152,11 @@ const resolvers = {
         return { value: jwt.sign(userForToken, process.env.JWT_SECRET) }
       }
     },
+    Subscription: {
+      bookAdded: {
+        subscribe: () => pubsub.asyncIterator('BOOK_ADDED')
+      }
+    }
   }
 
   module.exports = resolvers

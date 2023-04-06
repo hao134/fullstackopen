@@ -44,7 +44,7 @@ const typeDefs = `
       author: String!
       published: Int!
       genres: [String!]!
-    ): BookData!
+    ): Book!
 
     editAuthor(
       name: String!
@@ -59,6 +59,10 @@ const typeDefs = `
       username: String!
       password: String!
     ): Token
+  }
+
+  type Subscription {
+    bookAdded: Book!
   }
 `
 
