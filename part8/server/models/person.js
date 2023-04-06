@@ -1,6 +1,6 @@
-const mongoose = require('mongoose')
+const mongose = require('mongoose')
 
-const schema = new mongoose.Schema({
+const schema = new mongose.Schema({
   name: {
     type: String,
     required: true,
@@ -22,10 +22,10 @@ const schema = new mongoose.Schema({
   },
   friendOf: [
     {
-      type: mongoose.Schema.Types.ObjectId,
+      type: mongose.Schema.Types.ObjectId,
       ref: 'User'
     }
-  ]
+  ],
 })
 
-module.exports = mongoose.model('Person', schema)
+module.exports = mongose.model('Person', schema)

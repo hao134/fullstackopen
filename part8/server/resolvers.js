@@ -12,6 +12,8 @@ const resolvers = {
         allPersons: async (root, args, context) => {
             console.log("person.find")
             if (!args.phone) {
+                const result = Person.find({}).populate('friendOf') 
+                //console.log(result)
                 return Person.find({}).populate('friendOf')
             }
 
@@ -30,16 +32,17 @@ const resolvers = {
                 city: root.city
             }
         },
-        friendOf: async (root) => {
-            const friends = await User.find({
-                friends: {
-                    $in: [root._id]
-                }
-            })
-            console.log("user.find")
+        // friendOf: async (root) => {
+        //     console.log("user.find")
+        //     const friends = await User.find({
+        //         friends: {
+        //             $in: [root._id]
+        //         }
+        //     })
+        //     console.log("user.find")
 
-            return friends
-        }
+        //     return friends
+        // }
     },
     Mutation: {
         addPerson: async (root, args, context) => {

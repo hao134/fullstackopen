@@ -24,6 +24,7 @@ const resolvers = require('./resolvers')
 
 const MONGODB_URI = process.env.MONGODB_URI
 
+
 console.log('connecting to MongoDB')
 
 mongoose.connect(MONGODB_URI)
@@ -62,7 +63,7 @@ const start = async () => {
           };
         },
       },
-    ],
+    ]
   })
 
   await server.start()
