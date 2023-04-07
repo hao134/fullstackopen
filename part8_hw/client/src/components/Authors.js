@@ -47,7 +47,7 @@ const Authors = (props) => {
           </TableBody>
         </Table>
       </TableContainer>
-      <SetBirthYear authors={authors}/>
+      <SetBirthYear authors={authors} setError = {props.setError}/>
     </div>
   )
 }

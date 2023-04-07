@@ -3,6 +3,7 @@ import { useMutation } from '@apollo/client'
 
 import { ADD_BOOK, ALL_BOOKS, ALL_AUTHORS } from '../queries'
 import { TextField, Button } from "@mui/material";
+import { updateCache } from '../App';
 
 const NewBook = (props) => {
   const [title, setTitle] = useState('')
@@ -12,7 +13,16 @@ const NewBook = (props) => {
   const [genres, setGenres] = useState([])
 
   const [ addBook ] = useMutation(ADD_BOOK, {
-    refetchQueries: [ { query: ALL_BOOKS }, { query: ALL_AUTHORS } ]
+    refetchQueries: [ { query: ALL_BOOKS }, { query: ALL_AUTHORS } ],
+    onError: (error) => {
+      error.graphQLErrors > 0
+        ? props.setError(error.graphQLErrors[0].message)
+        : props.setError(error.message);
+    },
+    update: (cache, response) => {
+      updateCache(cache, { query: ALL_BOOKS }, response.data.addBook)
+      console.log(response.data)
+    }
   })
 
   if (!props.show) {

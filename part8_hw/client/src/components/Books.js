@@ -59,7 +59,7 @@ const Books = (props) => {
               {books
               .filter((b) => (genre !== 'all' ? b.genres.includes(genre) : b))
               .map((b) => (
-                <TableRow key={b.id}>
+                <TableRow key={b.title}>
                   <TableCell>{b.title}</TableCell>
                   <TableCell>{b.author.name}</TableCell>
                   <TableCell>{b.published}</TableCell>
