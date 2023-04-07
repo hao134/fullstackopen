@@ -1,5 +1,5 @@
-import { useQuery } from '@apollo/client'
-import { useState } from 'react'
+import { useQuery, useLazyQuery } from '@apollo/client'
+import { useState, useEffect } from 'react'
 
 import { ALL_BOOKS } from '../queries'
 import {
@@ -14,23 +14,53 @@ import {
 } from "@mui/material";
 
 const Books = (props) => {
-  const [genre, setGenre] = useState('all')
   const result = useQuery(ALL_BOOKS)
+  const [getBooksByGenre, genreResult] = useLazyQuery(ALL_BOOKS,{
+    fetchPolicy: 'no-cache',
+  })
+  const [genre, setGenre] = useState('all')
+  const [books, setBooks] = useState([])
+
+  useEffect(() => {
+    if (result.data) {
+      setBooks(result.data.allBooks)
+    }
+  }, [result.data])
+
+  useEffect(() => {
+    if (genreResult.data) {
+      setBooks(genreResult.data.allBooks)
+    }
+  }, [genreResult.data])
+  
 
   if (!props.show) {
     return null
   }
   
-  if (result.loading){
+  if (result.loading || genreResult.loading ){
     return <div>loading...</div>
   }
 
-  
+  if (result.error || genreResult.error) {
+    return <div>error :(</div>;
+  }
 
-  const books = result.data.allBooks || []
+  const { allBooks } = result.data;
 
   // Get only unique genres
-  const genres = [...new Set(books.flatMap((book) => book.genres))]
+  const genres = [...new Set(allBooks.flatMap((book) => book.genres))].concat('all')
+
+  const handleGenreClick = (genre) => {
+    setGenre(genre)
+
+    if (genre === 'all') {
+      setBooks(allBooks)
+      return
+    }
+
+    getBooksByGenre({ variables: { genre: genre } })
+  }
 
   return (
     <div>
@@ -40,11 +70,10 @@ const Books = (props) => {
       </p>
       <div>
         {genres.map((genre) => (
-          <Button size='small' key={genre} onClick={() => setGenre(genre)}>
+          <Button size='small' key={genre} onClick={() => handleGenreClick(genre)}>
             {genre}
           </Button>
         ))}
-        <Button size = "small" color="success" onClick={() => setGenre('all')}>show all</Button>
       </div>
       <TableContainer component={Paper}>
         <Table>
@@ -56,9 +85,7 @@ const Books = (props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-              {books
-              .filter((b) => (genre !== 'all' ? b.genres.includes(genre) : b))
-              .map((b) => (
+              {books.map((b) => (
                 <TableRow key={b.title}>
                   <TableCell>{b.title}</TableCell>
                   <TableCell>{b.author.name}</TableCell>
