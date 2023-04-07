@@ -46,8 +46,7 @@ const resolvers = {
   
     },
     Author: {
-      bookCount: async (root) =>
-        await Book.find({ author: root.id }).countDocuments(),
+      bookCount: async ({ books }) => books.length
     },
     Mutation:{
       addBook: async (root, args, { currentUser }) => {
@@ -75,9 +74,8 @@ const resolvers = {
           }
         }
   
-        //const book = new Book({ ...args, author: author.id })
-        const book = new Book({ ...args, author })
   
+        const book = new Book({ ...args, author })
         try {
           await book.save()
         } catch (error) {
@@ -87,6 +85,9 @@ const resolvers = {
             error
           })
         }
+
+        author.books.push(book);
+        await author.save();
   
         // let bookData = await Book.findById(book.id).populate('author')
         pubsub.publish('BOOK_ADDED', { bookAdded : book })
