@@ -7,8 +7,31 @@ interface Result {
     rating: number;
     raringDescription: string;
 }
+interface ExerciseValues {
+    target: number;
+    dailyHours: number[];
+}
 
-const calculateExercises = (dailyHours: number[], target: number): Result => {
+function isArrayNumeric(arr: any[]): boolean {
+  return arr.every(item => !isNaN(item));
+}
+  
+const parseInput = (args: string[]): ExerciseValues => {
+    if (args.length < 4) throw new Error('Not enough arguments');
+    const target = Number(args[2]);
+    const dailyHours = args.slice(3).map(Number);
+  
+    if (!isNaN(target) && isArrayNumeric(dailyHours)) {
+      return {
+        target: target,
+        dailyHours: dailyHours
+      }
+    } else {
+      throw new Error('Provided values were not numbers!')
+    }
+}
+
+const calculateExercises = (target: number, dailyHours: number[]): Result => {
   const numberDays = dailyHours.length;
   const trainingDays = dailyHours.filter(hour => hour !== 0).length;
   const average = dailyHours.reduce((a, b) => a + b, 0) / numberDays;
@@ -40,4 +63,14 @@ const calculateExercises = (dailyHours: number[], target: number): Result => {
   }
 }
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 0.5))
+
+try {
+  const { target, dailyHours } = parseInput(process.argv);
+  console.log(calculateExercises(target, dailyHours))
+} catch (error: unknown) {
+  let errorMessage = 'Something bad happend.'
+  if (error instanceof Error) {
+    errorMessage += ' Error: ' + error.message
+  }
+    console.log(errorMessage)
+}
