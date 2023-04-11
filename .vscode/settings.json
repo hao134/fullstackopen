@@ -1,3 +1,7 @@
 {
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    "eslint.workingDirectories": [
+        "./part9",
+        "./part9_hw"
+      ]
 }
