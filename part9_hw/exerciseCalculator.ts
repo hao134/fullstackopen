@@ -12,7 +12,9 @@ interface ExerciseValues {
     dailyHours: number[];
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isArrayNumeric(arr: any[]): boolean {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   return arr.every(item => !isNaN(item));
 }
   
@@ -25,11 +27,11 @@ const parseInput = (args: string[]): ExerciseValues => {
       return {
         target: target,
         dailyHours: dailyHours
-      }
+      };
     } else {
-      throw new Error('Provided values were not numbers!')
+      throw new Error('Provided values were not numbers!');
     }
-}
+};
 
 const calculateExercises = (target: number, dailyHours: number[]): Result => {
   const numberDays = dailyHours.length;
@@ -40,13 +42,13 @@ const calculateExercises = (target: number, dailyHours: number[]): Result => {
   const getRating = (average: number, target: number): number => {
     if (average < target * 0.7) return 1;
     if (average < target) return 2;
-    if (average >= target) return 3;
+    return 3;
   };
 
   const getRatingDescription = (rating: number): string => {
     if (rating === 1) return 'fail';
     if (rating === 2) return 'acceptable';
-    if (rating === 3) return 'good';
+    return 'good';
   };
 
   const rating = getRating(average, target);
@@ -60,17 +62,17 @@ const calculateExercises = (target: number, dailyHours: number[]): Result => {
     success,
     rating,
     raringDescription
-  }
-}
+  };
+};
 
 
 try {
   const { target, dailyHours } = parseInput(process.argv);
-  console.log(calculateExercises(target, dailyHours))
+  console.log(calculateExercises(target, dailyHours));
 } catch (error: unknown) {
-  let errorMessage = 'Something bad happend.'
+  let errorMessage = 'Something bad happend.';
   if (error instanceof Error) {
-    errorMessage += ' Error: ' + error.message
+    errorMessage += ' Error: ' + error.message;
   }
-    console.log(errorMessage)
+    console.log(errorMessage);
 }
