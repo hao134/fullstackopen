@@ -7,9 +7,10 @@ export interface DiaryEntry {
     date: string;
     weather: Weather;
     visibility: Visibility;
-    comment?: string;
+    comment: string;
 }
   
 export type NewDiaryEntry = Omit<DiaryEntry, 'id'>;
-  
+
+// 9c Utility Types => To hide sensitive information(comment)
 export type NonSensitiveDiaryEntry = Omit<DiaryEntry, 'comment'>;
