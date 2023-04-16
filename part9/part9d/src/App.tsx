@@ -30,7 +30,7 @@ const App = () => {
       description: "Confusing description",
       backgroundMaterial: "https://type-level-typescript.com/template-literal-types",
       kind: 'background'
-    },
+    }
   ];
 
   return (
