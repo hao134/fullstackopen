@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Diary } from './types';
-import { getAllDiaries } from './diaryService';
+import { getAllDiaries, createDiary } from './diaryService';
 
 const App = () => {
   const [diaries, setDiaries] = useState<Diary[]>([]);
-  //const [newNote, setNewNote] = useState('');
+  const [newDiary, setNewDiary] = useState({ date: "", weather: "", visibility: "", comment: ""})
 
   useEffect(() => {
     getAllDiaries().then(data => {
@@ -12,27 +12,49 @@ const App = () => {
     })
   }, [])
 
-  // const noteCreation = (event: React.SyntheticEvent) => {
-  //   event.preventDefault()
-  //   createNote({ content: newNote }).then(data => {
-  //     setNotes(notes.concat(data))
-  //   })
-  //   // axios.post<Note>('http://localhost:3001/notes', { content: newNote })
-  //   //   .then(response => {
-  //   //     setNotes(notes.concat(response.data))
-  //   //   })
-  //   setNewNote('');
-  // }
+  const diaryCreation = (event: React.SyntheticEvent) => {
+    event.preventDefault()
+    createDiary({ 
+      date: newDiary.date, 
+      weather: newDiary.weather, 
+      visibility: newDiary.visibility, 
+      comment: newDiary.comment 
+    }).then(data => {
+      setDiaries(diaries.concat(data))
+    })
+    setNewDiary({ date: '', weather: '', visibility: '', comment: '' });
+  }
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // form's name and value
+    const { name, value } = event.target;
+    // form of newPerson: {name: '', number: ''}
+    // when [name] is name is "a" -> add {name: "a"}
+    // when [name] is number is "1" -> add {number: "1"}
+    setNewDiary({ ...newDiary, [name]: value });
+  }
 
   return (
     <div>
-      {/* <form onSubmit={noteCreation}>
-        <input
-          value={newNote}
-          onChange={(event) => setNewNote(event.target.value)}
-        />
+      <form onSubmit={diaryCreation}>
+        <div>
+          date:{" "}
+          <input name="date" value={newDiary.date} onChange={handleChange}/>
+        </div>
+        <div>
+          weather:{" "}
+          <input name="weather" value={newDiary.weather} onChange={handleChange}/>
+        </div>
+        <div>
+          visibility:{" "}
+          <input name="visibility" value={newDiary.visibility} onChange={handleChange}/>
+        </div>
+        <div>
+          comment:{" "}
+          <input name="comment" value={newDiary.comment} onChange={handleChange}/>
+        </div>
         <button type='submit'>add</button>
-      </form> */}
+      </form>
       <h2>Diary Entries</h2>
       {diaries.map((diary) =>
         <div key={diary.id}>
