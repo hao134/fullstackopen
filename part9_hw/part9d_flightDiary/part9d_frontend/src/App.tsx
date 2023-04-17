@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Diary } from './types';
 import { getAllDiaries, createDiary } from './diaryService';
+import axios from 'axios';
 
 const App = () => {
   const [diaries, setDiaries] = useState<Diary[]>([]);
+  const [message, setMessage] = useState<string | null>(null)
   const [newDiary, setNewDiary] = useState({ date: "", weather: "", visibility: "", comment: ""})
 
   useEffect(() => {
-    getAllDiaries().then(data => {
-      setDiaries(data)
+    getAllDiaries().then(data=> {
+      setDiaries(data);
     })
   }, [])
 
@@ -21,6 +23,14 @@ const App = () => {
       comment: newDiary.comment 
     }).then(data => {
       setDiaries(diaries.concat(data))
+    }).catch(error =>{
+      if (axios.isAxiosError(error)){
+        setMessage(error.response?.data || 'unknown error occurred.');
+        setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+      }
+      
     })
     setNewDiary({ date: '', weather: '', visibility: '', comment: '' });
   }
@@ -36,6 +46,12 @@ const App = () => {
 
   return (
     <div>
+      <h2>Add new entry</h2>
+      {message && (
+        <div className='error'>
+          {message}
+        </div>
+      )}
       <form onSubmit={diaryCreation}>
         <div>
           date:{" "}

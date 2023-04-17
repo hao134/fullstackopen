@@ -6,4 +6,9 @@ export interface Diary {
     comment: string
 }
 
+export interface NotificationProps {
+    message: string | null;
+}
+    
+
 export type NewDiary = Omit<Diary, 'id'>
