@@ -55,15 +55,31 @@ const App = () => {
       <form onSubmit={diaryCreation}>
         <div>
           date:{" "}
-          <input name="date" value={newDiary.date} onChange={handleChange}/>
+          <input type="date" name="date" value={newDiary.date} onChange={handleChange}/>
         </div>
         <div>
           weather:{" "}
-          <input name="weather" value={newDiary.weather} onChange={handleChange}/>
+          <input name="weather" type = "radio" value="sunny" checked={newDiary.weather==="sunny"} onChange={handleChange}/>
+          <label htmlFor="sunny">sunny</label>
+          <input name="weather" type = "radio" value="rainy" checked={newDiary.weather==="rainy"} onChange={handleChange}/>
+          <label htmlFor="rainy">rainy</label>
+          <input name="weather" type = "radio" value="cloudy" checked={newDiary.weather==="cloudy"} onChange={handleChange}/>
+          <label htmlFor="cloudy">cloudy</label>
+          <input name="weather" type = "radio" value="stormy" checked={newDiary.weather==="stormy"} onChange={handleChange}/>
+          <label htmlFor="stormy">stormy</label>
+          <input name="weather" type = "radio" value="windy" checked={newDiary.weather==="windy"} onChange={handleChange}/>
+          <label htmlFor="windy">windy</label>
         </div>
         <div>
           visibility:{" "}
-          <input name="visibility" value={newDiary.visibility} onChange={handleChange}/>
+          <input name="visibility" type = "radio" value="great" checked={newDiary.visibility==="great"} onChange={handleChange}/>
+          <label htmlFor="great">great</label>
+          <input name="visibility" type = "radio" value="good" checked={newDiary.visibility==="good"} onChange={handleChange}/>
+          <label htmlFor="good">good</label>
+          <input name="visibility" type = "radio" value="ok" checked={newDiary.visibility==="ok"} onChange={handleChange}/>
+          <label htmlFor="ok">ok</label>
+          <input name="visibility" type = "radio" value="poor" checked={newDiary.visibility==="poor"} onChange={handleChange}/>
+          <label htmlFor="poor">poor</label>
         </div>
         <div>
           comment:{" "}
