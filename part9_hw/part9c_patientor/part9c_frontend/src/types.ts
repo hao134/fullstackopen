@@ -19,4 +19,8 @@ export interface Patient {
   dateOfBirth?: string;
 }
 
+export interface PatientPageRouteProps {
+  id: string;
+}
+
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
