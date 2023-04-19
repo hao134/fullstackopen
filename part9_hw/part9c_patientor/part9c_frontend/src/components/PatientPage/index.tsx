@@ -42,6 +42,19 @@ const PatientPage: React.FC<PatientPageRouteProps> = ({ id }) => {
       
       ssn: {patientData.ssn}<br/>
       occupation: {patientData.occupation}
+      <h3>entries</h3>
+      {patientData.entries?.map((entry) => (
+        <div key={entry.id}>
+          <p>{entry.date} {entry.description}</p>
+          {entry.diagnosisCodes ? (
+            <ul>
+              {entry.diagnosisCodes.map((code) => (
+                <li key={code}>{code}</li>
+              ))}
+            </ul>
+          ): null}
+        </div>
+      ))}
     </div>
   );
 };
