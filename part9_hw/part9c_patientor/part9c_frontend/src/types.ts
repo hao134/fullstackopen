@@ -23,7 +23,7 @@ interface BaseEntry {
   specialist: string;
   diagnosisCodes?: Array<Diagnosis["code"]>;
   type: typeof EntryTypes[number]; 
-  // represent type only can be one of [ "HealthCheck","Hospital","OccupationalHealthcare"]
+  // represent type only can be one of [ "HealthCheck","Hospital","OccupationalHealthcare"].
 }
 
 export enum HealthCheckRating {

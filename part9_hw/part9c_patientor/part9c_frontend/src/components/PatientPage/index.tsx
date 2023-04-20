@@ -5,6 +5,7 @@ import { apiBaseUrl } from "../../constants";
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 import TransgenderIcon from '@mui/icons-material/Transgender';
+import EntryData from "./EntryData";
  
 
 const PatientPage: React.FC<PatientPageRouteProps> = ({ id }) => {
@@ -51,8 +52,8 @@ const PatientPage: React.FC<PatientPageRouteProps> = ({ id }) => {
       occupation: {patientData.occupation}
       <h3>entries</h3>
       {patientData.entries?.map((entry) => (
-        <div key={entry.id}>
-          <p>{entry.date} <i>{entry.description}</i></p>
+        <div key={entry.id} className="message">
+          <h2>{entry.date} <i>{entry.description}</i></h2>
           {entry.diagnosisCodes ? (
             <ul>
               {entry.diagnosisCodes.map((code) => {
@@ -66,6 +67,7 @@ const PatientPage: React.FC<PatientPageRouteProps> = ({ id }) => {
               })}
             </ul>
           ): null}
+          <EntryData entry={entry} />
         </div>
       ))}
     </div>
