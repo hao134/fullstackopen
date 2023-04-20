@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Patient, PatientPageRouteProps } from "../../types";
+import { Patient, PatientPageRouteProps, Diagnosis } from "../../types";
 import { useState, useEffect } from "react";
 import { apiBaseUrl } from "../../constants";
 import MaleIcon from '@mui/icons-material/Male';
@@ -9,10 +9,17 @@ import TransgenderIcon from '@mui/icons-material/Transgender';
 
 const PatientPage: React.FC<PatientPageRouteProps> = ({ id }) => {
   const [patientData, setPatientData] = useState<Patient>();
+  const [diagnosisData, setDiagnosisData] = useState<Diagnosis[]>();
 
   useEffect(() => {
     axios.get(`${apiBaseUrl}/patients/${id}`).then(response => {
       setPatientData(response.data);
+    });
+  }, [id]);
+
+  useEffect(() => {
+    axios.get(`${apiBaseUrl}/diagnoses`).then(response => {
+      setDiagnosisData(response.data);
     });
   }, [id]);
 
@@ -45,12 +52,18 @@ const PatientPage: React.FC<PatientPageRouteProps> = ({ id }) => {
       <h3>entries</h3>
       {patientData.entries?.map((entry) => (
         <div key={entry.id}>
-          <p>{entry.date} {entry.description}</p>
+          <p>{entry.date} <i>{entry.description}</i></p>
           {entry.diagnosisCodes ? (
             <ul>
-              {entry.diagnosisCodes.map((code) => (
-                <li key={code}>{code}</li>
-              ))}
+              {entry.diagnosisCodes.map((code) => {
+                const matchingDiagnose = diagnosisData?.find((diagnose) => diagnose.code === code);
+                return(
+                  <li key={code}>
+                    {code} - {matchingDiagnose ? matchingDiagnose.name: "unknown code"}
+                  </li>
+                );
+                
+              })}
             </ul>
           ): null}
         </div>
