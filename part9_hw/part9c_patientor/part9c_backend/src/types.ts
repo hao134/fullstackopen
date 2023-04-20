@@ -10,6 +10,12 @@ export interface DiagnoseEntry {
     latin?: string;
 }
 
+export const EntryTypes = [
+    'HealthCheck',
+    'Hospital',
+    'OccupationalHealthcare',
+] as const;
+
 interface BaseEntry {
     id: string;
     description: string;

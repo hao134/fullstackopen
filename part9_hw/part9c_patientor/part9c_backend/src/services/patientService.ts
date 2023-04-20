@@ -4,7 +4,9 @@ import { v1 as uuid } from 'uuid';
 import { 
   NonSensitivePatient, 
   Patient, 
-  NewPatientEntry 
+  NewPatientEntry,
+  Entry,
+  NewEntry
 } from '../types';
 
 const getEntries = (): Patient[] => {
@@ -36,9 +38,24 @@ const addPatient = ( entry: NewPatientEntry ): Patient => {
   return newPatientEntry;
 }
 
+const addEntry = ( newEntry: NewEntry, patientID: string ): Entry => {
+  const id = uuid();
+  const entryWithID = { ...newEntry, id};
+  patientsData.forEach((patient) => {
+    if (patient.id === patientID){
+      patient.entries.push(entryWithID);
+      return patient;
+    }
+    return patient;
+  });
+
+  return entryWithID;
+}
+
 export default {
   getEntries,
   getNonSensitivePatientEntry,
   findById,
-  addPatient
+  addPatient,
+  addEntry
 };

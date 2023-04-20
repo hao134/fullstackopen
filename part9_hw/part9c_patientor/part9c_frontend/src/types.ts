@@ -10,6 +10,18 @@ export enum Gender {
   Other = "other"
 }
 
+export enum DianosisCodes {
+  N300 = "N30.0",
+  H547 = "H54.7",
+  J030 = "J03.0",
+  L601 = "L60.1",
+  Z743 = "Z74.3",
+  L20 = "L20",
+  F432 = "F43.2",
+  S625 = "S62.5",
+  H3529 = "H35.29"
+}
+
 export const EntryTypes = [
   "HealthCheck",
   "Hospital",
@@ -32,6 +44,18 @@ export enum HealthCheckRating {
   "HighRisk" = 2,
   "CriticalRisk" = 3,
 }
+
+export type newHealthCheckEntry = Omit<HealthCheckEntry, 'id' | 'type'>;
+export type newHospitalEntry = Omit<HospitalEntry, 'id' | 'type'>;
+export type newOccupationalHealthcareEntry = Omit<
+  OccupationalHealthcareEntry,
+  'id' | 'type'
+>;
+
+export type newEntry =
+  | newHealthCheckEntry
+  | newHospitalEntry
+  | newOccupationalHealthcareEntry;
 
 interface HealthCheckEntry extends BaseEntry {
   type: "HealthCheck";
