@@ -8,6 +8,7 @@ https://fullstackopen.com/en/part1
 
 * part2 Communicating with server
 https://fullstackopen.com/en/part2
+    * part2 country note: https://github.com/hao134/fullstackopen/tree/main/part2/src_country
 
 * Part3 Programming a server with NodeJS and Express
 https://fullstackopen.com/en/part3
