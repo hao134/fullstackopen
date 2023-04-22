@@ -2,12 +2,34 @@
 ## course
 https://fullstackopen.com/en
 
-* part1:
-https://fullstackopen.com/zh/part1/react_%E7%AE%80%E4%BB%8B
+* part1 Introduction to React
+https://fullstackopen.com/en/part1
 
-* part3 main app's github:
-https://github.com/hao134/render-notesapp
+* part2 Communicating with server
+https://fullstackopen.com/en/part2
 
-* part3 phonebook app:
-https://shielded-ridge-97474.herokuapp.com
-https://render-phonebookapp.onrender.com
+* Part3 Programming a server with NodeJS and Express
+https://fullstackopen.com/en/part3
+    * part3 main app's github:
+    https://github.com/hao134/render-notesapp
+
+    * part3 phonebook app:
+    https://render-phonebookapp.onrender.com
+
+* Part4 Testing Express servers, user administration
+https://fullstackopen.com/en/part4
+
+* Part5 Testing React apps
+https://fullstackopen.com/en/part5
+
+* Part6 Advanced state management
+https://fullstackopen.com/en/part6
+
+* Part7 React router, custom hooks, styling app with CSS and webpack
+https://fullstackopen.com/en/part7
+
+* Part8 GraphQL
+https://fullstackopen.com/en/part8
+
+* Part9 TypeScript
+https://fullstackopen.com/en/part9
