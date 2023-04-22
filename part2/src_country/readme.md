@@ -1,10 +1,16 @@
 ## 首頁如此：
+<hr/>
+
 ![](https://i.imgur.com/CK0VEJO.png)
 
 ### 輸入國家名會給出一些選項：
+<hr/>
+
 ![](https://i.imgur.com/Jw940RO.png)
 
 ### 按下Germany旁邊的show按鈕後：
+<hr/>
+
 ![](https://i.imgur.com/3qjqbo2.png)
 
 * 首頁的組成是這樣：
@@ -42,6 +48,8 @@ useEffect(() => {
 ```
 
 ### 而當輸入的國家名明確，則明確顯示一個國家
+<hr/>
+
 ![](https://i.imgur.com/6S5FElg.png)
 
 * 當按下show的時候，由於setCountriesToShow([country])，會顯示單個國家：
