@@ -19,6 +19,9 @@ https://fullstackopen.com/en/part3
     * part3 phonebook app:
     https://render-phonebookapp.onrender.com
 
+    * part3 phonebook's note:
+    https://github.com/hao134/fullstackopen/tree/main/part3/phonebook_frontend
+
 * Part4 Testing Express servers, user administration
 https://fullstackopen.com/en/part4
 
