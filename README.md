@@ -8,13 +8,15 @@ https://fullstackopen.com/en/part1
 
 * part2 Communicating with server
 https://fullstackopen.com/en/part2
-    * part2 country note: https://github.com/hao134/fullstackopen/tree/main/part2/src_country
+    * part2 country note: 
+    https://github.com/hao134/fullstackopen/tree/main/part2/src_country
         * method used: 
         [useEffect](https://legacy.reactjs.org/docs/hooks-effect.html),
         [useState](https://legacy.reactjs.org/docs/hooks-state.html),
         [filter_method](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter),
         [map_method](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)
-    * part2 courseinfo note: https://github.com/hao134/fullstackopen/tree/main/part2/src_courseinfo
+    * part2 courseinfo note: 
+    https://github.com/hao134/fullstackopen/tree/main/part2/src_courseinfo
         * method used:
         [reduce_method](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce)
 * Part3 Programming a server with NodeJS and Express
@@ -38,9 +40,9 @@ https://fullstackopen.com/en/part3
     * part3 phonebook's backend note:
     https://github.com/hao134/fullstackopen/tree/main/part3/phonebook_backend
         * method used:
-        [express](https://expressjs.com)
+        [express](https://expressjs.com),
         [mongoose](https://mongoosejs.com/docs/guide.html),
-        [morgan middleware](https://expressjs.com/en/resources/middleware/morgan.html),
+        [morgan middleware](https://expressjs.com/en/resources/middleware/morgan.html)
 
 
 * Part4 Testing Express servers, user administration
