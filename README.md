@@ -47,6 +47,13 @@ https://fullstackopen.com/en/part3
 
 * Part4 Testing Express servers, user administration
 https://fullstackopen.com/en/part4
+    * Part4 BlogList backend Note:
+    https://github.com/hao134/fullstackopen/tree/main/part4_blogList
+        * method used:
+        [express](https://expressjs.com),
+        [mongoose](https://mongoosejs.com/docs/guide.html),
+        [bcrypt](https://www.npmjs.com/package/bcrypt),
+        [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken)
 
 * Part5 Testing React apps
 https://fullstackopen.com/en/part5
