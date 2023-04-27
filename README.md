@@ -53,7 +53,16 @@ https://fullstackopen.com/en/part4
         [express](https://expressjs.com),
         [mongoose](https://mongoosejs.com/docs/guide.html),
         [bcrypt](https://www.npmjs.com/package/bcrypt),
-        [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken)
+        [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken),
+        [async function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function)
+    
+    * Part4 BlogList backend Test Note:
+    https://github.com/hao134/fullstackopen/tree/main/part4_blogList/tests
+        * method used:
+        [jest](https://jestjs.io),
+        [supertest](https://www.npmjs.com/package/supertest),
+        [Lodash](https://lodash.com),
+        [reduce_method](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce)
 
 * Part5 Testing React apps
 https://fullstackopen.com/en/part5
