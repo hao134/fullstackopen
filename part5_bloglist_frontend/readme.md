@@ -88,7 +88,7 @@ const Togglable = forwardRef((props, refs) => {
 })
 ```
 而要從外部調用Toggleable裡面的子組件時，需要用forwardRef和useImperativeHandle，因此在App.js裡面可以看到addBlog裡面如何調用toggleable裡面的子組件(blogFormRef.current.toggleVisibility())，當增加blog時會同時令blogform 隱藏：
-```javascript=
+```javascript
 import { useRef } from 'react'
 const blogFormRef = useRef()
 
@@ -121,7 +121,7 @@ const App = () => {
 
 
 * login的實現方法為在window.localStorage存入登入資訊，logout時就清除window.localStorage裡的資訊：
-```javascript=
+```javascript
 const App = () => {
     //...
     useEffect(() => {
@@ -166,7 +166,7 @@ const App = () => {
 ![](https://i.imgur.com/ayYz6uA.png)
 ![](https://i.imgur.com/uBTnYmh.png)
 而實現的方法為用sort，對於sort方法，當返回值大於0時，代表a要排在b的後面，反之則排在前面。因此，當使用sort((a, b) => b.likes - a.likes)時，會比較每個blog的likes屬性，以b.likes - a.likes的方式比較。如果b.likes比a.likes大，則返回值大於0，代表b應該排在a的前面，因此排序結果就是降序，likes數量由高到低：
-```javascript=
+```javascript
 {blogs
   .sort((a, b) => b.likes - a.likes)
   .map(blog => (
