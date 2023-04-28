@@ -66,6 +66,12 @@ https://fullstackopen.com/en/part4
 
 * Part5 Testing React apps
 https://fullstackopen.com/en/part5
+    * Part5 BlogList frontend Note:
+    https://github.com/hao134/fullstackopen/tree/main/part5_bloglist_frontend
+      * method used:
+      [sort_method](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort),
+      [useRef](https://legacy.reactjs.org/docs/hooks-reference.html#useref),
+      [useImperativeHandle](https://legacy.reactjs.org/docs/hooks-reference.html#useimperativehandle)
 
 * Part6 Advanced state management
 https://fullstackopen.com/en/part6
