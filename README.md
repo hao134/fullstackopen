@@ -73,6 +73,14 @@ https://fullstackopen.com/en/part5
       [useRef](https://legacy.reactjs.org/docs/hooks-reference.html#useref),
       [useImperativeHandle](https://legacy.reactjs.org/docs/hooks-reference.html#useimperativehandle)
 
+    * Part5 BlogList frintend Test(我沒有寫筆記，我想搭配課程內容看code就很清楚了):
+    https://fullstackopen.com/en/part5/testing_react_apps
+    https://github.com/hao134/fullstackopen/tree/main/part5_bloglist_frontend/src/components
+
+    * Part5 End To End Testing(我沒有寫筆記，我想搭配課程內容看code就很清楚了):
+    https://fullstackopen.com/en/part5/end_to_end_testing
+    https://github.com/hao134/fullstackopen/blob/main/part5_bloglist_frontend/cypress/e2e/blog_app.cy.js
+
 * Part6 Advanced state management
 https://fullstackopen.com/en/part6
 
