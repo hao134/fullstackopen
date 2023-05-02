@@ -83,10 +83,17 @@ https://fullstackopen.com/en/part5
 
 * Part6 Advanced state management
 https://fullstackopen.com/en/part6
-    Part6_hw1 unicafe Note:
+    * Part6_hw1 unicafe Note:
     https://github.com/hao134/fullstackopen/tree/main/part6_hw/src_unicafe_redux
         * method used:
         [redux](https://redux.js.org/)
+    
+    * Part6_hw2 anecdote list Note:
+    https://github.com/hao134/fullstackopen/tree/main/part6_hw/src
+        * method used:
+        [react-redux](https://react-redux.js.org)
+        [redux-thunk](https://github.com/reduxjs/redux-thunk)
+        
 * Part7 React router, custom hooks, styling app with CSS and webpack
 https://fullstackopen.com/en/part7
 
