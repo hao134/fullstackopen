@@ -15,9 +15,9 @@ return (
 將照順序講解
 
 ## Notification
-**當我們對第一則"Notification func is improved at 2023.3.9投票時"**
+### 當我們對第一則"Notification func is improved at 2023.3.9投票時"
 ![](https://i.imgur.com/1weyJqe.png)
-**會產生提醒**
+### 會產生提醒
 ![](https://i.imgur.com/oXmu9m0.png)
 
 * Notification 這個component 是長這樣的：
