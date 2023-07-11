@@ -226,7 +226,7 @@ const Notification = ({ notification }) => {
 
 export default Notification
 ```
-* 並且設計成它會在跳轉回主要後顯示3秒後消失：
+* 並且設計成它會在跳轉回主頁後顯示3秒後消失：
 ```javascript
   // clear notification after 3 seconds
   useEffect(() => {
@@ -246,4 +246,54 @@ export default Notification
     navigate("/")
     setNotification(`A new anecdote ${anecdote.content} created`)
   }
+```
+# Country hook
+## 首頁如此
+![](https://hackmd.io/_uploads/r1r0kCcKh.jpg)
+```javascript
+const App = () => {
+  const query = useField('text')
+  const [ name, setName ] = useState('')
+  const country = useCountry(name)
+  
+  const fetch = (e) => {
+    e.preventDefault()
+    setName(query.value)
+  }
+
+  return (
+    <div>
+      <form onSubmit={fetch}>
+        Find countries <input {...query} />
+        <button>find</button>
+      </form>
+      <CountryData country={country}/>
+    </div>
+  )
+}
+```
+fetch的功用在於使用setName將name變數以form表單傳遞，以及表單提交事件中，避免重新載入頁面
+
+## 搜尋結果呈現如此：
+![](https://hackmd.io/_uploads/ByYzQCctn.jpg)
+而得到資料的方法是在hook.js裡面的這段code：
+```javascript
+export const useCountry = (name) => {
+  const [country, setCountry] = useState(null)
+
+  useEffect(() => {
+    console.log('effect')
+    axios
+      .get(`https://restcountries.com/v3.1/name/${name}?fullText=true`)
+      .then(response => {
+        console.log('promise fulfilled')
+        setCountry(response.data[0])
+      })
+      .catch((error)=>{
+        setCountry(null)
+      })
+  }, [name])
+
+  return country
+}
 ```
