@@ -96,6 +96,10 @@ https://fullstackopen.com/en/part6
         
 * Part7 React router, custom hooks, styling app with CSS and webpack
 https://fullstackopen.com/en/part7
+   * Part7_hw1_anecdote & country hook:
+   https://github.com/hao134/fullstackopen/tree/main/part7_hw1
+      * method used:
+      [State Hook](https://legacy.reactjs.org/docs/hooks-state.html)
 
 * Part8 GraphQL
 https://fullstackopen.com/en/part8
