@@ -1,6 +1,6 @@
 # anecdote:
 ## 首頁如此：
-![](https://hackmd.io/_uploads/BkmOP8Fth.jpg)
+![](https://i.imgur.com/qQrjuP5.jpg)
 
 
 ## 首頁的配置呈現為：
@@ -23,7 +23,7 @@ return (
 
 
 ## 而在path /create中畫面為：
-![](https://hackmd.io/_uploads/SkYvsLKY2.jpg)
+![](https://i.imgur.com/0tIsrCd.jpg)
 * 如何設定在path /create分頁, 在App.js：
 ```javascript
 import {
@@ -143,9 +143,9 @@ const { reset: resetInfo, ...info } = useField('url')
 這樣，我們可以在表單中使用 content、author 和 info 這些變數，來設置對應的輸入欄位的屬性，例如 name、value、onChange 等，以實現表單的控制和資料綁定。同時，也可以使用 resetContent、resetAuthor 和 resetInfo 來重置這些欄位的值。
 
 ## 展示單個anecdote
-![](https://hackmd.io/_uploads/rJliVU5Yn.jpg)
+![](https://i.imgur.com/EbKd5Rv.jpg)
 然後
-![](https://hackmd.io/_uploads/S1di48qF3.jpg)
+![](https://i.imgur.com/0Rpd9AG.jpg)
 * 首先在主path /中：
 
 在App.js中：
@@ -210,9 +210,9 @@ const anecdote = match
 
 ## create Anecdote時有個提醒
 * 當我要創這個anecdote時
-![](https://hackmd.io/_uploads/By6gn85Kn.jpg)
+![](https://i.imgur.com/cBLNk57.jpg)
 * 會跳回主path，增加anecdote時有個提醒
-![](https://hackmd.io/_uploads/H1CT3I9Y2.jpg)
+![](https://i.imgur.com/Xxha6iN.jpg)
 * 這個提醒的code設計主要來自src/components/Notification.js裡
 ```javascript
 const Notification = ({ notification }) => {
@@ -226,7 +226,7 @@ const Notification = ({ notification }) => {
 
 export default Notification
 ```
-* 並且設計成它會在跳轉回主頁後顯示3秒後消失：
+* 並且設計成它會在跳轉回主要後顯示3秒後消失：
 ```javascript
   // clear notification after 3 seconds
   useEffect(() => {
