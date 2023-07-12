@@ -1,7 +1,7 @@
 # a.GraphQL - server
 ## Part1: The number of books and authors
 * target:
-![](https://hackmd.io/_uploads/rkg8FJ3F2.jpg)
+![](https://imgur.com/6PUko4S)
 * code:
 ```javascript
 const typeDefs = `
