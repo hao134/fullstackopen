@@ -1,7 +1,7 @@
 # a.GraphQL - server
 ## Part1: The number of books and authors
 * target:
-![](https://imgur.com/6PUko4S)
+![](https://imgur.com/a/6PUko4S)
 * code:
 ```javascript
 const typeDefs = `
