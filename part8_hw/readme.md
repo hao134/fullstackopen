@@ -1,7 +1,9 @@
-# a.GraphQL - server
+# A. GraphQL-server
 ## Part1: The number of books and authors
 * target:
-![](https://imgur.com/a/6PUko4S)
+![](https://i.imgur.com/hP2plJI.jpeg)
+
+
 * code:
 ```javascript
 const typeDefs = `
@@ -31,7 +33,7 @@ const resolvers = {
 }
 ```
 * result:
-![](https://hackmd.io/_uploads/rJX2tynYn.jpg)
+![](https://i.imgur.com/TGkQsdq.jpg)
 
 ## Part2: All books
 * target:
@@ -79,7 +81,7 @@ const resolvers = {
 //...
 ```
 * result:
-![](https://hackmd.io/_uploads/BJXMkgnth.jpg)
+![](https://i.imgur.com/ZPXNHE6.jpg)
 
 ## Part3: All authors
 * target:
@@ -134,7 +136,7 @@ const server = new ApolloServer({
 ```
 
 * result:
-![](https://hackmd.io/_uploads/B10-1mnY3.jpg)
+![](https://i.imgur.com/JNrJVaO.jpg)
 
 ## Part4: Books of an author
 * target:
@@ -187,7 +189,7 @@ const resolvers = {
 }
 ```
 * result
-![](https://hackmd.io/_uploads/SJaFVmhKh.jpg)
+![](https://i.imgur.com/ZWZTc8S.jpg)
 
 ## Part5 Books by genre
 * target: 
@@ -251,8 +253,8 @@ const resolvers = {
 }
 ```
 * results:
-![](https://hackmd.io/_uploads/BJT3jX3F2.jpg)
-![](https://hackmd.io/_uploads/BJRTo72t2.jpg)
+![](https://i.imgur.com/8d3dCV0.jpg)
+![](https://i.imgur.com/cLYPl0R.jpg)
 
 ## Part6 Adding a book
 Implement mutation addBook, which can be used like this:
@@ -346,8 +348,8 @@ const resolvers = {
 }
 //...
 ```
-![](https://hackmd.io/_uploads/rynObNhFn.jpg)
-![](https://hackmd.io/_uploads/HJ5yfNhK2.jpg)
+![](https://i.imgur.com/sZ3EWiZ.jpg)
+![](https://i.imgur.com/3OQsnYc.jpg)
 
 ## Part7 Updating the birth year of an author
 
@@ -417,5 +419,5 @@ const resolvers = {
 }
 ```
 * result:
-![](https://hackmd.io/_uploads/rkLEH4hFh.jpg)
-![](https://hackmd.io/_uploads/BkvSHN2t3.jpg)
+![](https://i.imgur.com/fIB4060.jpg)
+![](https://i.imgur.com/4HhPiKO.jpg)
