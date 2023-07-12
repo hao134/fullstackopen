@@ -103,6 +103,10 @@ https://fullstackopen.com/en/part7
 
 * Part8 GraphQL
 https://fullstackopen.com/en/part8
+   * Part 8 hw:
+   https://github.com/hao134/fullstackopen/tree/main/part8_hw
+      * method used:
+      [GraphQL](https://graphql.org)
 
 * Part9 TypeScript
 https://fullstackopen.com/en/part9
