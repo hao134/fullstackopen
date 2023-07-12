@@ -249,7 +249,7 @@ export default Notification
 ```
 # Country hook
 ## 首頁如此
-![](https://hackmd.io/_uploads/r1r0kCcKh.jpg)
+![](https://i.imgur.com/7CoqCy2.jpg)
 ```javascript
 const App = () => {
   const query = useField('text')
@@ -275,7 +275,7 @@ const App = () => {
 fetch的功用在於使用setName將name變數以form表單傳遞，以及表單提交事件中，避免重新載入頁面
 
 ## 搜尋結果呈現如此：
-![](https://hackmd.io/_uploads/ByYzQCctn.jpg)
+![](https://i.imgur.com/fkMXCKC.jpg)
 而得到資料的方法是在hook.js裡面的這段code：
 ```javascript
 export const useCountry = (name) => {
