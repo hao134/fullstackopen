@@ -967,3 +967,467 @@ export default Authors
 ![](https://i.imgur.com/0Ab8g4u.jpg)
 * 可以看到按下button後出生年已經改變成1980了
 ![](https://i.imgur.com/bxsxBUV.jpg)
+
+# C. Database and user administration
+## Part13, 14, 15, change the database to mongoDB
+### Target
+這個步驟是更新後端的code，將原本存在index.js裡的資料，存在mongoDB裡面，這樣做的好處是透過後端更新code時能夠永久記住資料，不會在下次啟動後端時遺失資料。
+### Code
+1. 先安裝套件：
+```
+npm install mongoose dotenv
+```
+2. 在server/models裡，增加mongoDB的model，裡面定義了對author和book這兩個資料集的schema
+* author.js
+```javascript
+const mongoose = require('mongoose')
+
+
+const schema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+        unique: true,
+        minlength: 4
+    },
+    born: {
+        type: Number,
+    },
+})
+
+module.exports = mongoose.model('Author', schema)
+```
+* book.js
+```javascript
+const mongoose = require('mongoose')
+
+const schema = new mongoose.Schema({
+    title: {
+        type: String,
+        required: true,
+        unique: true,
+        minlength: 5
+    },
+    published: {
+        type: Number,
+    },
+    author: {
+        type: mongoose.Schema.Types.ObjectId,
+        red: 'Author'
+    },
+    genres: [{ type: String }]
+})
+
+module.exports = mongoose.model('Book', schema)
+```
+* 以下操作都在index.js裡
+
+3. 引入mongoose套件並完成基本設定：
+```javascript
+//...
+const mongoose = require('mongoose')
+mongoose.set('strictQuery', false)
+const Author = require('./models/author')
+const Book = require('./models/book')
+require('dotenv').config()
+
+const MONGODB_URI = process.env.MONGODB_URI
+
+console.log('connecting to', MONGODB_URI)
+
+mongoose.connect(MONGODB_URI)
+  .then(() => {
+    console.log('connected to MongoDB')
+  })
+  .catch((error) => {
+    console.log('error connection to MongoDB:', error.message)
+  })
+//...
+```
+4. 更改typeDefs，更動的地方請見註解，理由來自文中(so that instead of just the author's name, the book object contains all the details of the author. You can assume that the user will not try to add faulty books or authors, so you don't have to care about validation errors.)
+```javascript
+const typeDefs = `
+  //...
+  type Book {
+    title: String!
+    author: Author!   // String! -> Author!
+    //...
+    id: ID!
+  }
+  //...
+  type Mutation {
+    addBook(
+      //...
+    ): Book!          // Book -> Book!
+
+    //...
+  }
+`
+```
+
+5. (part13)resolvers，暫且修改成如此，計數的部分由mongoose提供的countDocuments()計，而下面的addBook則是使後端能增加book的資料
+```javascript
+const resolvers = {
+  Query: {
+    authorCount: async () => Author.collection.countDocuments(),
+    bookCount: async () => Book.collection.countDocuments(),
+    allAuthors: async (root, args) => {
+      return Author.find({})
+    },
+    //...
+
+  },
+  //...
+  Mutation:{
+    addBook: async (root, args) => {
+      let author = await Author.findOne({ name: args.author })
+
+      if (!author){
+        author = new Author({ name: args.author })
+        await author.save()
+      }
+
+      const book = new Book({ ...args, author: author.id })
+      return book.save()
+    },
+    //...
+  },
+}
+```
+6. (part14)resolvers，繼續修改，在Query部分實現allBooks的query，Author部分的bookCount，還有更改(Mutation)部分的editAuthor
+```javascript
+const resolvers = {
+  Query: {
+    //...
+    allBooks: async (root, args) => {
+      if (args.author && args.genre) {
+        const author = await Author.findOne({ name: args.author })
+        const books = await Book.find({
+          $and: [
+            { author: { $in: author.id }},
+            { genres: { $in: args.genre }}
+          ]
+        }).populate('author')
+
+        return books
+      }
+
+      if (args.author) {
+        const author = await Author.findOne({ name: args.author })
+        const books = await Book.find({ author: { $in: author.id }}).populate('author')
+        
+        return books
+      }
+
+      if (args.genre) {
+        const books = await Book.find({ genres: { $in: args.genre }}).populate('author')
+        return books
+      }
+      return await Book.find({}).populate('author')
+    }
+
+  },
+  Author: {
+    bookCount: async (root) =>
+      await Book.find({ author: root.id }).countDocuments(),
+  },
+  Mutation:{
+    //...
+    editAuthor: async (root, args) => {
+      const author = await Author.findOne({ name: args.name })
+
+      if (!author) return null
+
+      const updatedAuthor = await Author.findOneAndUpdate(
+          { name: args.name },
+          { born: args.setBornTo },
+          { new: true }
+      )
+      
+      return updatedAuthor
+    }
+  },
+}
+```
+* 解釋：
+
+在默認情況下，當我們執行 Book.find({}) 查詢時，author 字段僅包含對 Author 模型中文檔的引用，而不是實際的 Author 文檔。
+
+使用 populate('author') 方法可以告訴 Mongoose 將 author 字段的引用替換為實際的 Author 文檔。這樣，查詢結果中的 author 字段將包含完整的 Author 文檔對象，而不僅僅是引用。
+
+通過執行 populate 方法，我們可以輕鬆地在查詢結果中獲取關聯文檔的詳細信息，而不必額外進行查詢。這對於處理關聯數據非常方便，可以避免多次查詢數據庫。
+
+7. (part15)根據這步驟的指示是要我們完善程式，使得資料庫驗證錯誤（例如書籍標題或作者名稱過短）能夠合理地處理。這意味著它們會拋出一個適當的錯誤訊息的 GraphQLError。要修改的部分即是新增及修改諸如此類會更改到資料庫的動作
+```javascript
+//...
+//先引入GraphQLError
+const { GraphQLError } = require('graphql')
+//...
+const resolvers = {
+  //...
+  Mutation:{
+    addBook: async (root, args) => {
+      let author = await Author.findOne({ name: args.author })
+
+      if (!author){
+        author = new Author({ name: args.author })
+
+        try {
+          await author.save()
+        } catch (error) {
+          throw new GraphQLError('Saving book failed', {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args,
+            error
+          })
+        }
+      }
+
+      const book = new Book({ ...args, author: author.id })
+
+      try {
+        await book.save()
+      } catch (error) {
+        throw new GraphQLError('Saving book failed', {
+          code: 'BAD_USER_INPUT',
+          invalidArgs: args,
+          error
+        })
+      }
+
+      return book
+    },
+    editAuthor: async (root, args) => {
+      const author = await Author.findOne({ name: args.name })
+
+      if (!author) return null
+
+      author.born = args.setBornTo
+
+      try {
+        await author.save()
+      } catch (error) {
+        throw new GraphQLError('Updating author failed', {
+          code: 'BAD_USER_INPUT',
+          invalidArgs: args,
+          error
+        })
+      }
+
+      return author
+    }
+  },
+}
+```
+### Result
+* 在apollo server中新增以下一筆book資料
+![](https://i.imgur.com/8lS3IY5.jpg)
+* 在mongoDB頁面中可以看到成功新增資料：
+![](https://i.imgur.com/A4Ud9Iu.jpg)
+
+## Part16 user and logging in
+### Target
+Add user management to your application. Expand the schema like so:
+```javascript
+type User {
+  username: String!
+  favoriteGenre: String!
+  id: ID!
+}
+
+type Token {
+  value: String!
+}
+
+type Query {
+  // ..
+  me: User
+}
+
+type Mutation {
+  // ...
+  createUser(
+    username: String!
+    favoriteGenre: String!
+  ): User
+  login(
+    username: String!
+    password: String!
+  ): Token
+}
+```
+Create resolvers for query me and the new mutations createUser and login. Like in the course material, you can assume all users have the same hardcoded password.
+
+Make the mutations addBook and editAuthor possible only if the request includes a valid token.
+
+### Code
+1. 一樣先新增User的schema在server/models/
+* user.js
+```javascript
+const mongoose = require('mongoose')
+
+const schema = new mongoose.Schema({
+    username: {
+        type: String,
+        required: true,
+        minlength: 3
+    },
+    favoriteGenre: {
+        type: String,
+    },
+})
+
+module.exports = mongoose.model('User', schema)
+```
+#### 之後的更改一樣都在index.js
+2. 先安裝[jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)，引入jsonwebtoken還有user model
+```javascript
+//...
+//require('dotenv').config()
+const jwt = require('jsonwebtoken')
+const User = require('./models/user')
+//...
+```
+3. typeDefs也要有一些相對應的更改，新增user和login的定義：
+```javascript
+const typeDefs = `
+  //...
+  type User {
+    username: String!
+    favoriteGenre: String!
+    id: ID!
+  }
+  type Token {
+    value: String!
+  }
+  type Query {
+    //...
+    me: User
+  }
+  type Mutation {
+    //...
+
+    editAuthor(
+      //...
+    ): Author
+
+    createUser(
+      username: String!
+      favoriteGenre: String!
+    ): User
+    login(
+      username: String!
+      password: String!
+    ): Token
+  }
+`
+```
+
+3. 再來是resolver part，要改變的部分包括
+* 增加me的Query
+* 對於新增和編輯書本的操作要求登入身份
+* 增加使用者和login的功能
+```javascript
+//...
+const resolvers = {
+  Query: {
+    //...
+    allBooks: async (root, args) => {
+      //...
+    },
+    me: (root, args, context) => {
+      return context.currentUser
+    }
+
+  },
+  //...
+  Mutation:{
+    addBook: async (root, args, { currentUser }) => {
+      if (!currentUser) {
+        throw new GraphQLError('not authenticated', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+          }
+        })
+      }
+
+      //...
+    },
+    editAuthor: async (root, args, {currentUser}) => {
+      if (!currentUser) {
+        throw new GraphQLError('not authenticated', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+          }
+        })
+      }
+      //...
+    },
+    createUser: async (root, args) => {
+      const user = new User({ ...args })
+
+      return user.save()
+        .catch(error => {
+          throw new GraphQLError('Creating the user failed', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.name,
+              error
+            }
+          })
+        })
+    },
+    login: async (root, args) => {
+      const user = await User.findOne({ username: args.username })
+
+      if (!user || args.password !== 'secret' ) {
+        throw new GraphQLError('wrong credentials', {
+          extensions: {
+            code: 'BAD_USER_INPUT'  
+          }
+        })
+      }
+
+      const userForToken = {
+        username: user.username,
+        id: user._id,
+      }
+
+      return { value: jwt.sign(userForToken, process.env.JWT_SECRET) }
+    }
+  },
+}
+```
+
+4. 最後一步是要驗證jwt token，若符合則返回currentuser以供之後的更改操作
+```javascript
+//...
+startStandaloneServer(server, {
+  listen: { port: 4000 },
+  context: async ({ req, res }) => {
+    const auth = req ? req.headers.authorization : null 
+    if (auth && auth.startsWith('Bearer ')) {
+      const decodedToken = jwt.verify(
+        auth.substring(7), process.env.JWT_SECRET  
+      )
+      const currentUser = await User.findById(decodedToken.id)
+      return { currentUser }
+    }
+  },
+}).then(({ url }) => {
+  console.log(`Server ready at ${url}`)
+})
+```
+### Result
+
+* 首先嘗試像以前一樣新增一筆資料(真夏方程式)，會發現錯誤訊息(not authenticated)
+![](https://i.imgur.com/V8NMR8J.jpg)
+* 解決方法是先創立一個使用者(密碼固定為secret)
+![](https://i.imgur.com/ogk7NKE.jpg)
+* 登入以獲得jwt token
+![](https://i.imgur.com/oK7lo8J.jpg)
+* 將獲得的jwt token加入到Headers
+![](https://i.imgur.com/UlMJFyR.jpg)
+* 可以發現新增功能如常運作了
+![](https://i.imgur.com/ZqkA3BT.jpg)
+
