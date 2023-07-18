@@ -1431,3 +1431,754 @@ startStandaloneServer(server, {
 * 可以發現新增功能如常運作了
 ![](https://i.imgur.com/ZqkA3BT.jpg)
 
+# d. Login and updating the cache & e. Fragments and subscriptions
+## Part17 Listing Books
+### Target
+After the backend changes, the list of books does not work anymore. Fix it.
+* 原本的頁面在顯示authors時：
+![](https://i.imgur.com/hWKRKcZ.jpg)
+* 當顯示books的時候：
+![](https://i.imgur.com/LwFbNIi.jpg)
+### Code
+* 會有這樣的錯誤應該是後端原本是參照author的name，但改為參照author的全部資料，而前端並未做相對應的修改，而發生如上的錯誤
+![](https://i.imgur.com/NmUL0ar.jpg)
+
+因此修改方法為在
+* client/src/components/Books.js裡修改為只要map author資料裡面的name
+![](https://i.imgur.com/RDHsK8n.jpg)
+* client/src/components/queries.js 一樣修改為author的name
+![](https://i.imgur.com/6FO3PSY.jpg)
+### Result
+books 可以正常顯示了
+![](https://i.imgur.com/AX0mQOW.jpg)
+
+## Part18 Log in
+### Target
+原本我們已經在後端實現了實名修改功能，但是前端還沒有實現，因此此時更改資訊時會出現錯誤
+![](https://i.imgur.com/5iDjqAg.jpg)
+按下update author後，出現not authenticated的錯誤
+![](https://i.imgur.com/o8SK6t2.jpg)
+因此要實作login功能
+### Code
+1. 首先，要有新的query，當然要在queries.js中新增
+* queries.js
+```javascript
+//...
+ export const LOGIN = gql`
+   mutation login($username: String!, $password: String!) {
+    login(username: $username, password: $password) {
+      value
+    }
+   }
+ `
+```
+
+2. 實現Login頁面，當表單提交帳號名稱和密碼時，後端會回傳jwt token，觸發useEffect將token存在localStorage以供登入使用。
+```javascript
+import { useState, useEffect } from "react";
+import { useMutation } from "@apollo/client";
+import { LOGIN } from '../queries'
+
+const LoginForm = (props) => {
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+    
+    const [ login, result ] = useMutation(LOGIN)
+
+    useEffect(() => {
+        if ( result.data ) {
+            const token = result.data.login.value
+            props.setToken(token)
+            localStorage.setItem('library-user-token', token)
+        }
+    }, [result.data]) // eslint-disable-line
+
+    const submit = async (event) => {
+        event.preventDefault()
+
+        login({ variables: {username, password} })
+    }
+
+    return (
+        <div>
+            <form onSubmit={submit}>
+                <div>
+                    username <input
+                      value = {username}
+                      onChange={({ target }) => setUsername(target.value)}
+                    />
+                </div>
+                <div>
+                    password <input
+                      type="password"
+                      value={password}
+                      onChange={({ target }) => setPassword(target.value)}
+                    />
+                </div>
+                <button type="submit">login</button>
+            </form>
+        </div>
+    )
+}
+
+export default LoginForm
+```
+
+3. index.js也要稍改一下，將jwt token加入headers才能維持登入
+* index.js
+```javascript
+import React from 'react'
+ import ReactDOM from 'react-dom/client'
+ import App from './App'
+ import { 
+   ApolloClient,
+   ApolloProvider,
+   InMemoryCache, 
+   createHttpLink
+ } from '@apollo/client'
+ import { setContext } from '@apollo/client/link/context'
+
+ const authLink = setContext((_, { headers }) => {
+  const token = localStorage.getItem('library-user-token')
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : null,
+    }
+  }
+ })
+
+ const httpLink = createHttpLink({
+  uri: 'http://localhost:4000'
+ })
+
+ const client = new ApolloClient({
+   link: authLink.concat(httpLink),
+   cache: new InMemoryCache(),
+ })
+
+ ReactDOM.createRoot(document.getElementById('root')).render(
+   <ApolloProvider client={client}>
+     <App />
+   </ApolloProvider>
+ )
+
+```
+4. 主要頁面也要重整一下，當未登入時顯示登入功能，而登入時顯示登出功能
+* App.js
+```javascript
+import { useState } from 'react'
+
+import Authors from './components/Authors'
+import Books from './components/Books'
+import NewBook from './components/NewBook'
+import LoginForm from './components/LoginForm'
+import { useApolloClient } from '@apollo/client'
+
+const App = () => {
+  const [page, setPage] = useState('authors')
+  const [token, setToken] = useState(null)
+  const client = useApolloClient()
+
+  if (!token){
+    return (
+      <div>
+        <div>
+          <button onClick={() => setPage('authors')}>authors</button>
+          <button onClick={() => setPage('books')}>books</button>
+          <button onClick={() => setPage('login')}>login</button>
+        </div>
+
+        <Authors show={page === 'authors'} />
+
+        <Books show={page === 'books'} />
+
+        <LoginForm show={page === 'login'} setToken={setToken} />
+      </div>
+    )
+  }
+
+  const logout = () => {
+    setToken(null)
+    localStorage.clear()
+    client.resetStore()
+  }
+
+  return (
+    <div>
+      <div>
+        <button onClick={() => setPage('authors')}>authors</button>
+        <button onClick={() => setPage('books')}>books</button>
+        <button onClick={() => setPage('add')}>add book</button>
+        <button onClick={logout}>logout</button>
+      </div>
+
+      <Authors show={page === 'authors'} />
+
+      <Books show={page === 'books'} />
+
+      <NewBook show={page === 'add'} />
+    </div>
+  )
+}
+
+export default App
+```
+
+### Result
+* 未登入時，需要登入
+![](https://i.imgur.com/dTPpNU9.jpg)
+* 登入後，原本的login改為logout，且可以新增資料了
+![](https://i.imgur.com/BwJfKRB.jpg)
+
+## Part19 Books by genre, part 1
+### Target
+Complete your application to filter the book list by genre. Your solution might look something like this:
+![](https://i.imgur.com/tB60YUQ.jpg)
+### Code
+在這一步驟中，我用了[material UI](https://mui.com/material-ui/getting-started/installation/)來優化介面，但這不是這個步驟的重點，重點是上面target所述針對不同genre分類，因此我直接寫出完成這個重點的code
+* client/src/components/Books.js
+```javascript
+//...
+const Books = (props) => {
+    const [genre, setGenre] = useState('all')
+    const result = useQuery(ALL_BOOKS)
+    if (result.loading){
+        return <div>loading...</div>
+    }
+
+    if (!props.show) {
+        return null
+    }
+
+    const books = result.data.allBooks || []
+
+    // Get only unique genres
+    const genres = [...new Set(books.flatMap((book) => book.genres))]
+
+    return (
+        <div>
+            <h2>books</h2>
+
+            <p>
+                in genre <strong>{genre}</strong>
+            </p>
+            <div>
+                {genres.map((genre) => (
+                    <button key={genre} onClick={() => setGenre(genre)}>
+                      {genre}
+                    </button>
+                ))}
+                <button onClick={() => setGenre('all')}>show all</button>
+            </div>
+            <TableContainer component={Paper}>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>title</TableCell>
+                            <TableCell>Author</TableCell>
+                            <TableCell>Published</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {books
+                        .filter((b) => (genre !== 'all' ? b.genres.includes(genre) : b))
+                        .map((b) => (
+                            <TableRow key={b.id}>
+                                <TableCell>{b.title}</TableCell>
+                                <TableCell>{b.author.name}</TableCell>
+                                <TableCell>{b.published}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </div>
+    )
+}
+
+export default Books
+```
+大部分的code並不難理解，主要需要講的是第16行的code
+```javascript
+const genres = [...new Set(books.flatMap((book) => book.genres))]
+```
+1. books.flatMap((book) => book.genres): 使用 flatMap 方法對 books 數組進行扁平化操作，將每本書的 genres 數組提取出來並合併為一個扁平化的數組。例如，如果有兩本書，第一本書的 genres 是 ['Fantasy', 'Adventure']，第二本書的 genres 是 ['Sci-Fi', 'Mystery']，那麼該操作將返回 ['Fantasy', 'Adventure', 'Sci-Fi', 'Mystery']。
+
+2. [...new Set(array)]: 使用 Set 對象將數組轉換為一組唯一的值，消除重複的元素。 Set 是 JavaScript 中的一種數據結構，它只存儲唯一的值。通過使用 Set 構造函數將數組轉換為 Set 對象，然後使用擴展運算符 ... 將其轉換回數組形式。這樣做可以去除重複的元素。
+
+綜合起來，給定的代碼將提取 books 數組中所有書籍的流派（genres），並創建一個不重複的流派數組。例如，如果 books 數組中有三本書，每本書的流派分別為 ['Fantasy', 'Adventure']、['Sci-Fi', 'Mystery'] 和 ['Fantasy']，那麼最終的 genres 數組將是 ['Fantasy', 'Adventure', 'Sci-Fi', 'Mystery']。
+
+### Result
+* 預設是顯示所有genres
+![](https://i.imgur.com/wAMbWri.jpg)
+* 但如果按下genre為crime的按鈕，則只有顯示genre為crime的書籍
+![](https://i.imgur.com/xDuGNTB.jpg)
+
+## Part20 Books by genre, part 2
+### Target
+Implement a view which shows all the books based on the logged-in user's favourite genre.
+![](https://i.imgur.com/4kulsrk.jpg)
+### Code
+1. 如同前面的步驟，要從資料庫中獲得user的資訊，要在queries.js中定義新的query
+* queries.js
+```javascript
+export const USER = gql`
+  query {
+   me {
+     username
+     favoriteGenre
+   }
+  }
+`
+```
+2. 接下來定義新的分頁，比如說我喜歡genre為crime的，在此Recommand頁面它就會推薦我genre為crime的書的資料，而假如沒有crime這個genre的話，那它就顯示在此genre沒有書籍資料。
+* /client/src/components/Recommend.js
+```javascript 
+import { useQuery } from "@apollo/client";
+import { USER, ALL_BOOKS } from "../queries"
+
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableRow,
+    Paper,
+    TableHead,
+} from "@mui/material"
+
+const Recommend = (props) => {
+    const user = useQuery(USER)
+    const books = useQuery(ALL_BOOKS)
+
+    if (!props.show) {
+        return null
+    }
+
+    if (user.loading || books.loading) {
+        return <div>loading...</div>
+    }
+
+    const { favoriteGenre } = user.data.me 
+    const { allBooks } = books.data 
+
+    const bookRecommendations = allBooks.filter((book) =>
+        book.genres.includes(favoriteGenre)
+    )
+
+    return (
+        <div>
+            <h2>recommandations</h2>
+            {bookRecommendations.length > 0 ? (
+                <div>
+                    <p>
+                        books in your favorite genre <strong>{favoriteGenre}</strong>
+                    </p>
+                    <TableContainer component={Paper}>
+                      <Table>
+                      <TableHead>
+                        <TableRow>
+                            <TableCell>title</TableCell>
+                            <TableCell>Author</TableCell>
+                            <TableCell>Published</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                      {bookRecommendations
+                        .map((book, i) => (
+                          <TableRow key={i}>
+                            <TableCell>{book.title}</TableCell>
+                            <TableCell>{book.author.name}</TableCell>
+                            <TableCell>{book.published}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                      </Table>
+                    </TableContainer>
+                </div>
+            ):(
+                <p>
+                    No books have been added yet based on your favorite genre{" "}
+                    <strong>{favoriteGenre}</strong>
+                </p>
+            )}
+        </div>
+    )
+}
+
+export default Recommend
+```
+
+3. 在主頁面中顯示Recommend頁面，且要登入時才有顯示
+![](https://i.imgur.com/E9yTDGE.jpg)
+
+### Result
+* 在尚未登入時沒有Recommend頁面
+![](https://i.imgur.com/TtKpemb.jpg)
+* 而在登入後就可以看到Recommend頁面
+![](https://i.imgur.com/cq5RoHB.jpg)
+
+## Part23 Subscriptions - server
+### Target
+Do a backend implementation for subscription bookAdded, which returns the details of all new books to its subscribers.
+### Code
+1. Refactor the Backend，將index.js裡面的resolver和schema分離出去，還有使用expressMiddleware取代原本的startStandaloneServer來實現訂閱功能
+* index.js
+```javascript
+const { ApolloServer } = require('@apollo/server')
+const { expressMiddleware } = require('@apollo/server/express4')
+const { ApolloServerPluginDrainHttpServer } = require('@apollo/server/plugin/drainHttpServer')
+const { makeExecutableSchema } = require('@graphql-tools/schema')
+
+const express = require('express')
+const cors = require('cors')
+const http = require('http')
+
+const jwt = require('jsonwebtoken')
+const mongoose = require('mongoose')
+mongoose.set('strictQuery', false)
+require('dotenv').config()
+const User = require('./models/user')
+
+const MONGODB_URI = process.env.MONGODB_URI
+
+const typeDefs = require('./schema')
+const resolvers = require('./resolvers')
+
+console.log('connecting to', MONGODB_URI)
+
+mongoose.connect(MONGODB_URI)
+  .then(() => {
+    console.log('connected to MongoDB')
+  })
+  .catch((error) => {
+    console.log('error connection to MongoDB:', error.message)
+  })
+
+const start = async () => {
+  const app = express()
+  const httpServer = http.createServer(app)
+
+  const server = new ApolloServer({
+    schema: makeExecutableSchema({ typeDefs, resolvers }),
+    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+  })
+
+  await server.start()
+
+  app.use(
+    '/',
+    cors(),
+    express.json(),
+    expressMiddleware(server, {
+      context: async ({ req }) => {
+        const auth = req ? req.headers.authorization : null
+        if (auth && auth.startsWith('Bearer ')) {
+          const decodedToken = jwt.verify(auth.substring(7), process.env.JWT_SECRET)
+          const currentUser = await User.findById(decodedToken.id)
+          return { currentUser }
+        }
+      }
+    })
+  )
+  const PORT = 4000
+  httpServer.listen(PORT, () =>
+    console.log(`Server is now running on http://localhost:${PORT}`)
+  )
+}
+start()
+```
+* resolvers.js
+```javascript
+const { GraphQLError } = require('graphql')
+const Author = require('./models/author')
+const Book = require('./models/book')
+const User = require('./models/user')
+const jwt = require('jsonwebtoken')
+
+const resolvers = {
+    Query: {
+      authorCount: async () => Author.collection.countDocuments(),
+      bookCount: async () => Book.collection.countDocuments(),
+      allAuthors: async (root, args) => {
+        return Author.find({})
+      },
+      allBooks: async (root, args) => {
+        if (args.author && args.genre) {
+          const author = await Author.findOne({ name: args.author })
+          const books = await Book.find({
+            $and: [
+              { author: { $in: author.id }},
+              { genres: { $in: args.genre }}
+            ]
+          }).populate('author')
+  
+          return books
+        }
+  
+        if (args.author) {
+          const author = await Author.findOne({ name: args.author })
+          const books = await Book.find({ author: { $in: author.id }}).populate('author')
+          
+          return books
+        }
+  
+        if (args.genre) {
+          const books = await Book.find({ genres: { $in: args.genre }}).populate('author')
+          return books
+        }
+        return await Book.find({}).populate('author')
+      },
+      me: (root, args, context) => {
+        return context.currentUser
+      }
+  
+    },
+    Author: {
+      bookCount: async (root) =>
+        await Book.find({ author: root.id }).countDocuments(),
+    },
+    Mutation:{
+      addBook: async (root, args, { currentUser }) => {
+        if (!currentUser) {
+          throw new GraphQLError('not authenticated', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+            }
+          })
+        }
+        
+        let author = await Author.findOne({ name: args.author })
+  
+        if (!author){
+          author = new Author({ name: args.author })
+  
+          try {
+            await author.save()
+          } catch (error) {
+            throw new GraphQLError('Saving author failed', {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args,
+              error
+            })
+          }
+        }
+  
+        const book = new Book({ ...args, author: author.id })
+  
+        try {
+          await book.save()
+        } catch (error) {
+          throw new GraphQLError('Saving book failed', {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args,
+            error
+          })
+        }
+  
+        let bookData = await Book.findById(book.id).populate('author')
+        console.log(bookData)
+        return bookData
+      },
+      editAuthor: async (root, args, { currentUser }) => {
+        if (!currentUser) {
+          throw new GraphQLError('not authenticated', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+            }
+          })
+        }
+  
+        const author = await Author.findOne({ name: args.name })
+  
+        if (!author) return null
+  
+        author.born = args.setBornTo
+  
+        try {
+          await author.save()
+        } catch (error) {
+          throw new GraphQLError('Updating author failed', {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args,
+            error
+          })
+        }
+  
+        return author
+      },
+      createUser: async (root, args) => {
+        const user = new User({ ...args })
+  
+        return user.save()
+          .catch(error => {
+            throw new GraphQLError('Creating the user failed', {
+              extensions: {
+                code: 'BAD_USER_INPUT',
+                invalidArgs: args.name,
+                error
+              }
+            })
+          })
+      },
+      login: async (root, args) => {
+        const user = await User.findOne({ username: args.username })
+  
+        if ( !user || args.password !== 'secret' ) {
+          throw new GraphQLError('wrong credentials', {
+            extensions: {
+              code: 'BAD_USER_INPUT'
+            }
+          })
+        }
+  
+        const userForToken = {
+          username: user.username,
+          id: user._id,
+        }
+        
+        return { value: jwt.sign(userForToken, process.env.JWT_SECRET) }
+      }
+    },
+  }
+
+  module.exports = resolvers
+```
+* schema.js
+```javascript
+const typeDefs = `
+  type Author {
+    name: String!
+    born: Int
+    bookCount: Int!
+    id: ID!
+  }
+  type Book {
+    title: String!
+    author: Author!
+    published: Int!
+    genres: [String!]!
+    id: ID!
+  }
+  type AuthorData {
+    name: String!
+    id: ID!
+  }
+  type BookData {
+    title: String!
+    author: AuthorData!
+    published: Int!
+    genres: [String!]!
+    id: ID!
+  }
+  type User {
+    username: String!
+    favoriteGenre: String!
+    id: ID!
+  }
+  type Token {
+    value: String!
+  }
+  type Query {
+    bookCount: Int!
+    authorCount: Int!
+    allAuthors: [Author!]!
+    allBooks(author: String, genre: String): [Book!]!
+    me: User
+  }
+  type Mutation {
+    addBook(
+      title: String!
+      author: String!
+      published: Int!
+      genres: [String!]!
+    ): BookData!
+
+    editAuthor(
+      name: String!
+      setBornTo: Int!
+    ): Author
+
+    createUser(
+      username: String!
+      favoriteGenre: String!
+    ): User
+    login(
+      username: String!
+      password: String!
+    ): Token
+  }
+`
+
+module.exports = typeDefs
+```
+2. 安裝需要的套件
+```
+npm install express cors
+npm install graphql-ws ws @graphql-tools/schema
+npm install graphql-subscriptions
+```
+3. 透過websocket實現訂閱
+* index.js
+```javascript
+//...
+const { WebSocketServer } = require('ws')
+const { useServer } = require('graphql-ws/lib/use/ws')
+
+//...
+
+const start = async () => {
+  const app = express()
+  const httpServer = http.createServer(app)
+
+  const wsServer = new WebSocketServer({
+    server: httpServer,
+    path: '/',
+  })
+
+  const schema = makeExecutableSchema({ typeDefs, resolvers })
+  const serverCleanup = useServer({ schema }, wsServer)
+
+  const server = new ApolloServer({
+    schema,
+    plugins: [
+      ApolloServerPluginDrainHttpServer({ httpServer }),
+      {
+        async serverWillStart() {
+          return {
+            async drainServer() {
+              await serverCleanup.dispose();
+            }
+          }
+        }
+      }
+    ],
+  })
+
+  await server.start()
+
+  //...
+}
+start()
+```
+* resolvers.js
+![](https://i.imgur.com/oeSxyaI.jpg)
+
+---
+
+![](https://i.imgur.com/8r51Jm7.jpg)
+* schema.js
+```javascript
+//...
+type Subscription {
+  bookAdded: Book!
+}
+```
+### Result
+* 按下subscription
+![](https://i.imgur.com/PSkYYRJ.jpg)
+* 右下角開始訂閱：
+![](https://i.imgur.com/nISGPXU.jpg)
+* 可以看到新增兩筆資料，右下角就紀錄這兩筆
+![](https://i.imgur.com/Sb1nfnk.jpg)
