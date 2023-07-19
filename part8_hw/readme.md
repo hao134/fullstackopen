@@ -2182,3 +2182,316 @@ type Subscription {
 ![](https://i.imgur.com/nISGPXU.jpg)
 * 可以看到新增兩筆資料，右下角就紀錄這兩筆
 ![](https://i.imgur.com/Sb1nfnk.jpg)
+
+## Part24&25 Subscriptions - client
+### Target
+Start using subscriptions in the client, and subscribe to bookAdded. When new books are added, notify the user. Any method works. For example, you can use the window.alert function.
+
+Keep the application's book view updated when the server notifies about new books (you can ignore the author view!). You can test your implementation by opening the app in two browser tabs and adding a new book in one tab. Adding the new book should update the view in both tabs.
+
+### Code
+1. 先安裝需要的套件
+```
+npm install graphql-ws 
+```
+2. index.js
+In order to use subscriptions in our React application, we have to do some changes, especially to its configuration. The configuration in index.js has to be modified like so:
+* client/src/index.js
+```javascript
+import React from 'react'
+ import ReactDOM from 'react-dom/client'
+ import App from './App'
+ import { ApolloClient, ApolloProvider, InMemoryCache, createHttpLink, split
+ } from '@apollo/client'
+ import { setContext } from '@apollo/client/link/context'
+
+ import { getMainDefinition } from '@apollo/client/utilities'
+ import { GraphQLWsLink } from '@apollo/client/link/subscriptions'
+ import { createClient } from 'graphql-ws'
+
+ const authLink = setContext((_, { headers }) => {
+  const token = localStorage.getItem('library-user-token')
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : null,
+    }
+  }
+ })
+
+ const httpLink = createHttpLink({ uri: 'http://localhost:4000' })
+
+ const wsLink = new GraphQLWsLink(
+  createClient({ url: 'ws://localhost:4000' })
+ )
+
+ const splitLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query)
+    return (
+      definition.kind === 'OperationDefinition' &&
+      definition.operation === 'subscription'
+    )
+  },
+  wsLink,
+  authLink.concat(httpLink)
+ )
+
+ const client = new ApolloClient({
+   cache: new InMemoryCache(),
+   link: splitLink
+ })
+
+ ReactDOM.createRoot(document.getElementById('root')).render(
+   <ApolloProvider client={client}>
+     <App />
+   </ApolloProvider>
+ )
+
+```
+The new configuration is due to the fact that the application must have an HTTP connection as well as a WebSocket connection to the GraphQL server.
+```
+const httpLink = createHttpLink({ uri: 'http://localhost:4000' })
+
+const wsLink = new GraphQLWsLink(
+  createClient({
+    url: 'ws://localhost:4000',
+  })
+)
+```
+
+3. 同時實作query的fragments和subscription的query，因此queries.js改成這樣
+* queries.js
+![](https://i.imgur.com/6k3pHBs.jpg)
+
+---
+
+![](https://i.imgur.com/q9s8tVT.jpg)
+
+4. App.js 中subscription
+```javascript
+import { useState, useEffect } from 'react'
+
+import Authors from './components/Authors'
+import Books from './components/Books'
+import NewBook from './components/NewBook'
+import Notify from './components/Notify'
+import LoginForm from './components/LoginForm'
+import Recommend from './components/Recommend'
+import { useApolloClient, useSubscription } from '@apollo/client'
+import { Button } from "@mui/material";
+import { ALL_BOOKS, BOOK_ADDED } from './queries'
+
+
+export const updateCache = (cache, query, addedBook) => {
+  // helper that is used to eliminate saving same book twice
+  const uniqByName = (a) => {
+    let seen = new Set()
+    return a.filter((item) => {
+      let k = item.title
+      return seen.has(k) ? false : seen.add(k)
+    })
+  }
+
+  cache.updateQuery(query, ({ allBooks }) => {
+    return {
+      allBooks: uniqByName(allBooks.concat(addedBook)),
+    }
+  })
+}
+
+const App = () => {
+  const [page, setPage] = useState('authors')
+  const [message, setMessage] = useState(null)
+  const [token, setToken] = useState(null)
+  const client = useApolloClient()
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+      const addedBook = data.data.bookAdded 
+      setMessage(`${addedBook.title} added`)
+
+      updateCache(client.cache, { query: ALL_BOOKS }, addedBook)
+    }
+  })
+
+  useEffect(() => {
+    const userFromStorage = localStorage.getItem('library-user-token')
+    if (userFromStorage) {
+      setToken(userFromStorage)
+    }
+  }, [])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setMessage(null);
+    }, 5000);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [message])
+
+  if (!token){
+    return (
+      <div>
+        <div>
+          <Button onClick={() => setPage('authors')}>authors</Button>
+          <Button onClick={() => setPage('books')}>books</Button>
+          <Button onClick={() => setPage('login')}>login</Button>
+        </div>
+
+        <Notify message={message} />
+        <Authors show={page === 'authors'} setError={setMessage} />
+
+        <Books show={page === 'books'} />
+
+        <LoginForm show={page === 'login'} setToken={setToken} setError={setMessage}/>
+      </div>
+    )
+  }
+
+  const logout = () => {
+    setToken(null)
+    localStorage.clear()
+    client.resetStore()
+  }
+
+  return (
+    <div>
+      <div>
+        <Button onClick={() => setPage('authors')}>authors</Button>
+        <Button onClick={() => setPage('books')}>books</Button>
+        <Button onClick={() => setPage('add')}>add book</Button>
+        <Button onClick={() => setPage('recommend')}>recommend</Button>
+        <Button onClick={logout}>logout</Button>
+      </div>
+
+      <Notify message={message} />
+      <Authors show={page === 'authors'} setError={setMessage}/>
+
+      <Books show={page === 'books'} />
+
+      <NewBook show={page === 'add'} setError={setMessage}/>
+
+      <Recommend show={page === 'recommend'} />
+    </div>
+  )
+}
+
+export default App
+```
+
+4. 同時實作query的fragments和subscription的query，因此queries.js改成這樣
+* queries.js
+![](https://i.imgur.com/6k3pHBs.jpg)
+
+---
+
+![](https://i.imgur.com/q9s8tVT.jpg)
+
+### Result
+可以開兩個分頁，當其中一個分頁新增資料時，另一個分頁也會更新頁面
+
+## Part 21&22 books by genre with GraphQL & Up-to-date cache and book recommendations
+### Target
+In the previous two exercises, the filtering could have been done using just React. To complete this exercise, you should redo the filtering the books based on a selected genre (that was done in exercise 8.19) using a GraphQL query to the server. If you already did so then you do not have to do anything.
+
+If you did the previous exercise, that is, fetch the books in a genre with GraphQL, ensure somehow that the books view is kept up to date. So when a new book is added, the books view is updated at least when a genre selection button is pressed.
+
+When new genre selection is not done, the view does not have to be updated.
+
+### Code
+簡單來說，原本由前端來分類不同的genre，變成由後端來分類，前端負責顯示，如下圖所示，原本由前端分類的改為單純的books資料，而books資料是使用useLazyQuery藉由外部動作後才去query得到的，具體如何實現請往下看
+![](https://i.imgur.com/aW0rpRz.jpg)
+* queries.js
+1. 加入參數使得query allBooks能以genre當作參數來query
+![](https://i.imgur.com/GkOQ4yo.jpg)
+* Books.js
+1. 首先，引入useLazyQuery和useEffect
+![](https://i.imgur.com/kCkcThT.jpg)
+2. 由於我在後端的設計沒有genre為'all'的分類，因此在這分為兩種資料，得到all資料的result和能由外部進行查詢的genreResult資料
+![](https://i.imgur.com/ORFWZCh.jpg)
+```
+const [getBooksByGenre, genreResult] = useLazyQuery(ALL_BOOKS, {
+    fetchPolicy: 'no-cache'
+})
+```
+useLazyQuery 使用了 ALL_BOOKS 查詢以及 { fetchPolicy: 'no-cache' } 選項。fetchPolicy: 'no-cache' 表示每次執行查詢時都將跳過緩存，並從服務器獲取最新的數據。
+這行程式碼使用 useLazyQuery 創建了一個可手動觸發的查詢函數 getBooksByGenre，並初始化了 genreResult 作為查詢的狀態和數據容器。
+
+3. handleGenreClick作為切換不同genre的函式
+![](https://i.imgur.com/vcSw0WQ.jpg)
+
+4. 按下按鈕後，books的資料就會query為該種按鈕代表的genre的資料
+![](https://i.imgur.com/YVpTu91.jpg)
+
+* Recommand.js
+大部分和上面相同，即是由原本的由前端處理的分類改為由後端處理，比較特別的是這段
+```javascript
+    useEffect(() => {
+        if (user.data) {
+            setFavoriteGenre(user?.data?.me?.favoriteGenre)
+            getBooks({ variables: { genre: favoriteGenre } })
+        }
+    }, [user.data, favoriteGenre, getBooks])
+```
+當 user.data 發生變化時，useEffect 會執行其中的回調函數。在這個回調函數中，它檢查 user.data 是否存在。如果存在，它會使用 setFavoriteGenre 函數將 user.data.me.favoriteGenre 的值設置為 favoriteGenre 狀態變數。然後，它調用 getBooks 函數，並將 { genre: favoriteGenre } 作為參數傳遞給該函數，以觸發書籍查詢。
+
+在這個例子中，useEffect 的目的是在 user.data 變化時，根據用戶的喜愛類型 (favoriteGenre) 來執行書籍查詢。它確保每當 user.data 或 favoriteGenre 發生變化時，都會觸發一次新的書籍查詢。
+
+需要注意的是，getBooks 函數是從 useLazyQuery hook 中獲取的，而不是從 useQuery。這是因為 useLazyQuery 提供了手動觸發查詢的能力，而 useQuery 則是自動執行查詢。在這個情境中，我們希望在 user.data 變化時手動觸發書籍查詢，因此使用了 useLazyQuery。
+
+## Part26 n+1
+### Target
+Solve the n+1 problem of the following query using any method you like.
+```
+query {
+  allAuthors {
+    name 
+    bookCount
+  }
+}
+```
+### Code
+1. 去掉多餘的查詢
+要解決這個問題，本來在server/resolvers.js裡的
+```javascript
+Author: {
+  bookCount: async ({ books }) => books.length
+},
+```
+要去掉，因為這個就是會造成n+1 problems裡的n次query的來源
+2. 在author的model schema加入book的scema
+* server/model/author.js
+```javascript
+const schema = new mongoose.Schema({
+    //...
+    books: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Book',
+        }
+    ]
+})
+```
+3. 在resolver.js裡的allAuthors的query要改變
+* server/resolver.js
+```javascript
+const resolvers = {
+    Query: {
+      //...
+      allAuthors: async () => {
+        const authors = await Author.find({});
+        const allAuthors = authors.map((author) => {
+          return {
+            name: author.name,
+            born: author.born,
+            bookCount: author.books.length,
+            id: author._id,
+          };
+        });
+        return allAuthors;
+      },
+      //...
+```
+這樣就可以避免掉n+1 problem了
