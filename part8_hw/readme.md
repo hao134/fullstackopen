@@ -2462,7 +2462,7 @@ Author: {
 ```
 要去掉，因為這個就是會造成n+1 problems裡的n次query的來源
 
-2. 在author的model schema加入book的scema
+2. 在author的model schema加入book的schema
 * server/model/author.js
 ```javascript
 const schema = new mongoose.Schema({
